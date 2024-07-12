@@ -14,7 +14,7 @@ class User {
     required this.favoriteLeagues,
     required this.favoriteTeams,
     required this.favoritePlayers,
-    required this.points,
+    this.points = 0,
   });
 
   // JSON으로부터 User 객체를 생성하는 팩토리 생성자

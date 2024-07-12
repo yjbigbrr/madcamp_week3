@@ -1,12 +1,14 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../model/user.dart';
+import '../model/User.dart';
 
 class UserService {
-  final String baseUrl = "http://localhost:3000";
+  final String baseUrl = "http://143.248.229.87:3000";
 
   // 사용자 생성
-  Future<User?> createUser(User user) async {
+  Future<bool> createUser(User user) async {
+    debugPrint("create user");
     final response = await http.post(
       Uri.parse('$baseUrl/users'),
       headers: <String, String>{
@@ -15,10 +17,15 @@ class UserService {
       body: jsonEncode(user.toJson()),
     );
 
-    if (response.statusCode == 200) {
-      return User.fromJson(jsonDecode(response.body));
+    debugPrint('Response status: ${response.statusCode}');
+    debugPrint('Response body: ${response.body}');
+
+    if (response.statusCode == 201) {
+      debugPrint("status code is 201");
+      return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to create user');
+      debugPrint("status code isn't 201");
+      return false;
     }
   }
 
@@ -95,9 +102,12 @@ class UserService {
       body: jsonEncode({'id': id, 'password': password}),
     );
 
-    if (response.statusCode == 200) {
+    debugPrint('Response status: ${response.statusCode}');
+    debugPrint('Response body: ${response.body}');
+
+    if (response.statusCode == 201) {
       final jsonResponse = jsonDecode(response.body);
-      return jsonResponse['success'];
+      return jsonResponse;
     } else {
       throw Exception('Failed to login');
     }
