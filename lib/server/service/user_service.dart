@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../model/User.dart';
+import 'base_url.dart';
 
 class UserService {
-  final String baseUrl = "http://143.248.229.87:3000";
+  final String baseUrl = BaseUrl.baseUrl;
 
   // 사용자 생성
   Future<bool> createUser(User user) async {

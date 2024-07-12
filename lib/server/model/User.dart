@@ -9,7 +9,7 @@ class User {
   final String? kakaoId;
   final String? email;
   final String? city;
-  final String? myPlayerId;
+  final List<String>? myPlayerId;
 
   User({
     required this.id,
@@ -38,7 +38,7 @@ class User {
       kakaoId: json['kakaoId'],
       email: json['email'],
       city: json['city'],
-      myPlayerId: json['myPlayerId'],
+      myPlayerId: List<String>.from(json['myPlayerId']),
     );
   }
 
