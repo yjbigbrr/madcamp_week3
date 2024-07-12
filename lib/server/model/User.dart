@@ -6,6 +6,10 @@ class User {
   final List<String> favoriteTeams;
   final List<String> favoritePlayers;
   final int points;
+  final String? kakaoId;
+  final String? email;
+  final String? city;
+  final String? myPlayerId;
 
   User({
     required this.id,
@@ -15,6 +19,10 @@ class User {
     required this.favoriteTeams,
     required this.favoritePlayers,
     this.points = 0,
+    this.kakaoId,
+    this.email,
+    this.city,
+    this.myPlayerId,
   });
 
   // JSON으로부터 User 객체를 생성하는 팩토리 생성자
@@ -27,6 +35,10 @@ class User {
       favoriteTeams: List<String>.from(json['favoriteTeams']),
       favoritePlayers: List<String>.from(json['favoritePlayers']),
       points: json['points'],
+      kakaoId: json['kakaoId'],
+      email: json['email'],
+      city: json['city'],
+      myPlayerId: json['myPlayerId'],
     );
   }
 
@@ -40,6 +52,10 @@ class User {
       'favoriteTeams': favoriteTeams,
       'favoritePlayers': favoritePlayers,
       'points': points,
+      'kakaoId': kakaoId,
+      'email': email,
+      'city': city,
+      'myPlayerId': myPlayerId,
     };
   }
 }

@@ -15,6 +15,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _favoriteLeaguesController = TextEditingController();
   final TextEditingController _favoriteTeamsController = TextEditingController();
   final TextEditingController _favoritePlayersController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final UserService _userService = UserService(); // UserService 인스턴스 생성
 
   void _register() async {
@@ -25,6 +27,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final favoriteLeagues = _favoriteLeaguesController.text.split(',').map((s) => s.trim()).toList();
     final favoriteTeams = _favoriteTeamsController.text.split(',').map((s) => s.trim()).toList();
     final favoritePlayers = _favoritePlayersController.text.split(',').map((s) => s.trim()).toList();
+    final city = _cityController.text;
+    final email = _emailController.text;
 
     if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -82,8 +86,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 obscureText: true,
               ),
               TextField(
+                controller: _emailController,
+                decoration: InputDecoration(labelText: 'Email'),
+              ),
+              TextField(
                 controller: _nicknameController,
                 decoration: InputDecoration(labelText: 'Nickname'),
+              ),
+              TextField(
+                controller: _cityController,
+                decoration: InputDecoration(labelText: 'City'),
               ),
               TextField(
                 controller: _favoriteLeaguesController,

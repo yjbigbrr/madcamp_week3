@@ -22,7 +22,7 @@ class UserService {
 
     if (response.statusCode == 201) {
       debugPrint("status code is 201");
-      return jsonDecode(response.body);
+      return jsonDecode(response.body)['success'];
     } else {
       debugPrint("status code isn't 201");
       return false;
@@ -94,20 +94,16 @@ class UserService {
 
   // 로그인
   Future<bool> login(String id, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/users/login'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode({'id': id, 'password': password}),
+    final response = await http.get(
+      Uri.parse('$baseUrl/users/login?id=$id&password=$password'),
     );
 
     debugPrint('Response status: ${response.statusCode}');
     debugPrint('Response body: ${response.body}');
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);
-      return jsonResponse;
+      return jsonResponse['success'];
     } else {
       throw Exception('Failed to login');
     }
