@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../model/User.dart';
+import 'base_url.dart';
 
 class UserService {
-  final String baseUrl = "http://143.248.229.87:3000";
+  final String baseUrl = BaseUrl.baseUrl;
 
   // 사용자 생성
   Future<bool> createUser(User user) async {
@@ -99,17 +100,14 @@ class UserService {
   }
 
   // 로그인
-  Future<bool> login(String id, String password) async {
+  Future<User> login(String id, String password) async {
     final response = await http.get(
       Uri.parse('$baseUrl/users/login?id=$id&password=$password'),
     );
 
-    debugPrint('Response status: ${response.statusCode}');
-    debugPrint('Response body: ${response.body}');
-
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);
-      return jsonResponse['success'];
+      return User.fromJson(jsonResponse); // Parse and return User
     } else {
       throw Exception('Failed to login');
     }
