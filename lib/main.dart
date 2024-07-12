@@ -1,82 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:soccer_app/kakao_login.dart';
+import 'package:soccer_app/main_view_model.dart';
 
 void main() {
-  runApp(MyApp());
+  KakaoSdk.init(nativeAppKey: '6cf381adbd9cf31b14c1db80c010a446');  // 실제 네이티브 앱 키로 대체하세요.
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Drawer Example',
+      title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
+  const MyHomePage({super.key, required this.title});
 
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
 class _MyHomePageState extends State<MyHomePage> {
+  final viewModel = MainViewModel(KakaoLogin());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter Drawer Example'),
+        title: Text(widget.title),
       ),
-      drawer: Drawer(
+      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            UserAccountsDrawerHeader(
-              accountName: Text('User Nickname'),
-              accountEmail: Text('User ID')
+            if (viewModel.user?.kakaoAccount?.profile?.profileImageUrl != null &&
+                viewModel.user!.kakaoAccount!.profile!.profileImageUrl!.isNotEmpty)
+              Image.network(viewModel.user!.kakaoAccount!.profile!.profileImageUrl!)
+            else
+              Icon(Icons.account_circle, size: 100), // Placeholder icon for no image
+            Text(
+              'Logged In: ${viewModel.isLogined}',
+              style: Theme.of(context).textTheme.headlineMedium,  // Updated to headlineMedium
             ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Home'),
-              onTap: () {
-                Navigator.pop(context);
+            ElevatedButton(
+              onPressed: () async {
+                await viewModel.login();
+                setState(() {});
               },
+              child: Text('Login'),
             ),
-            ListTile(
-              leading: Icon(Icons.trending_up),
-              title: Text('Ranking'),
-              onTap: () {
-                Navigator.pop(context);
+            ElevatedButton(
+              onPressed: () async {
+                await viewModel.logout();
+                setState(() {});
               },
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Profile'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.people),
-              title: Text('Friend'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            Divider(),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Logout'),
-              onTap: () {
-                Navigator.pop(context);
-              },
+              child: Text('Logout'),
             ),
           ],
         ),
-      ),
-      body: Center(
-        child: Text('Drawer Layout Example'),
       ),
     );
   }
