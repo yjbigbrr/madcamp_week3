@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'package:soccer_app/kakao_login.dart';
+import 'package:soccer_app/login/kakao_login.dart';
 import 'package:soccer_app/main_view_model.dart';
 import 'package:soccer_app/login/login_screen.dart';
 

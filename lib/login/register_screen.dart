@@ -3,6 +3,12 @@ import 'package:soccer_app/server/service/user_service.dart'; // UserService 임
 import 'package:soccer_app/server/model/User.dart';
 
 class RegisterScreen extends StatefulWidget {
+  final String? prefilledNickname;
+  final String? prefilledEmail;
+  final String? kakaoId;
+
+  RegisterScreen({this.prefilledNickname, this.prefilledEmail, this.kakaoId});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -18,6 +24,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final UserService _userService = UserService(); // UserService 인스턴스 생성
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.prefilledNickname != null) {
+      _nicknameController.text = widget.prefilledNickname!;
+    }
+    if (widget.prefilledEmail != null) {
+      _emailController.text = widget.prefilledEmail!;
+    }
+  }
 
   void _register() async {
     final id = _idController.text;
@@ -44,6 +61,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       favoriteLeagues: favoriteLeagues,
       favoriteTeams: favoriteTeams,
       favoritePlayers: favoritePlayers,
+      city: city,
+      email: email,
+      kakaoId: widget.kakaoId
     );
 
     bool isCreated = await _userService.createUser(newUser);

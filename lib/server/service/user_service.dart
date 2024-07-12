@@ -22,7 +22,7 @@ class UserService {
 
     if (response.statusCode == 201) {
       debugPrint("status code is 201");
-      return jsonDecode(response.body)['success'];
+      return jsonDecode(response.body);
     } else {
       debugPrint("status code isn't 201");
       return false;
@@ -42,8 +42,11 @@ class UserService {
   }
 
   // 특정 사용자 조회
-  Future<User?> getUserById(String id) async {
-    final response = await http.get(Uri.parse('$baseUrl/users?id=$id'));
+  Future<User?> getUserByKakaoId(String kakaoId) async {
+    final response = await http.get(Uri.parse('$baseUrl/users?kakaoId=$kakaoId'));
+
+    debugPrint('Response status: ${response.statusCode}');
+    debugPrint('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);
@@ -54,8 +57,11 @@ class UserService {
   }
 
   // 사용자 존재 여부 확인
-  Future<bool> isUserExists(String id) async {
-    final response = await http.get(Uri.parse('$baseUrl/users/exists?id=$id'));
+  Future<bool> isUserExists(String kakaoId) async {
+    final response = await http.get(Uri.parse('$baseUrl/users/exists?kakaoId=$kakaoId'));
+
+    debugPrint('Response status: ${response.statusCode}');
+    debugPrint('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
