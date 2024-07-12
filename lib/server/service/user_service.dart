@@ -100,17 +100,14 @@ class UserService {
   }
 
   // 로그인
-  Future<bool> login(String id, String password) async {
+  Future<User> login(String id, String password) async {
     final response = await http.get(
       Uri.parse('$baseUrl/users/login?id=$id&password=$password'),
     );
 
-    debugPrint('Response status: ${response.statusCode}');
-    debugPrint('Response body: ${response.body}');
-
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);
-      return jsonResponse['success'];
+      return User.fromJson(jsonResponse); // Parse and return User
     } else {
       throw Exception('Failed to login');
     }

@@ -25,24 +25,22 @@ class User {
     this.myPlayerId,
   });
 
-  // JSON으로부터 User 객체를 생성하는 팩토리 생성자
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
-      password: json['password'],
-      nickname: json['nickname'],
-      favoriteLeagues: List<String>.from(json['favoriteLeagues']),
-      favoriteTeams: List<String>.from(json['favoriteTeams']),
-      favoritePlayers: List<String>.from(json['favoritePlayers']),
-      points: json['points'],
+      id: json['id'] ?? '',
+      password: json['password'] ?? '',
+      nickname: json['nickname'] ?? '',
+      favoriteLeagues: List<String>.from(json['favoriteLeagues'] ?? []),
+      favoriteTeams: List<String>.from(json['favoriteTeams'] ?? []),
+      favoritePlayers: List<String>.from(json['favoritePlayers'] ?? []),
+      points: json['points'] ?? 0,
       kakaoId: json['kakaoId'],
       email: json['email'],
       city: json['city'],
-      myPlayerId: List<String>.from(json['myPlayerId']),
+      myPlayerId: List<String>.from(json['myPlayerId'] ?? []),
     );
   }
 
-  // User 객체를 JSON으로 변환하는 메서드
   Map<String, dynamic> toJson() {
     return {
       'id': id,
