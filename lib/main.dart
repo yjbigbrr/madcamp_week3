@@ -6,6 +6,8 @@ import 'package:soccer_app/main_view_model.dart';
 import 'package:soccer_app/login/login_screen.dart';
 import 'package:soccer_app/drawer/profile/profile_page.dart';
 import 'package:soccer_app/drawer/myplayer/myplayer_page.dart';
+import 'package:soccer_app/tab1/home_screen.dart'; // 추가
+
 
 void main() {
   KakaoSdk.init(nativeAppKey: '6cf381adbd9cf31b14c1db80c010a446');  // 실제 네이티브 앱 키로 대체하세요.
@@ -156,7 +158,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
-          Center(child: Text('Home Page Content')),
+          HomeScreen(), // 추가된 부분
+
           Center(child: Text('Ranking Page Content')),
           Center(child: Text('Profile Page Content')),
         ],

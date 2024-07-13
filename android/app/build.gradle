@@ -24,8 +24,10 @@ if (flutterVersionName == null) {
 }
 
 android {
+
     namespace = "com.example.soccer_app"
-    compileSdk 33
+    compileSdkVersion 34 // 추가
+
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
