@@ -10,13 +10,24 @@ import 'package:soccer_app/drawer/myplayer/myplayer_page.dart';
 
 void main() {
   KakaoSdk.init(nativeAppKey: '6cf381adbd9cf31b14c1db80c010a446');  // 실제 네이티브 앱 키로 대체하세요.
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (context) => ProfileViewModel()), // ProfileViewModel 등록
-      ChangeNotifierProvider(create: (context) => MyPlayerViewModel()), // MyPlayerViewModel 등록
-    ],
-    child: MyApp(),
-  ),
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => ProfileViewModel(),
+        ),
+        ChangeNotifierProxyProvider<ProfileViewModel, MyPlayerViewModel>(
+          create: (context) => MyPlayerViewModel(
+            profileViewModel: Provider.of<ProfileViewModel>(context, listen: false),
+          ),
+          update: (context, profileViewModel, myPlayerViewModel) {
+            return MyPlayerViewModel(profileViewModel: profileViewModel);
+          },
+        ),
+      ],
+      child: MyApp(),
+    ),
   );
 }
 
@@ -122,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                 ),
                 // Other Drawer items here
                 ListTile(
-                  title: Text('Profile'),
+                  title: Text('프로필'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -131,7 +142,25 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   },
                 ),
                 ListTile(
-                  title: Text('My Player'),
+                  title: Text('나만의 선수'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyPlayerPage()),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text('친구'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyPlayerPage()),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text('내 예약'),
                   onTap: () {
                     Navigator.push(
                       context,

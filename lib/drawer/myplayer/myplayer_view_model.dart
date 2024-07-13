@@ -1,51 +1,63 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:soccer_app/server/model/MyPlayer.dart';
+import 'package:provider/provider.dart';
+import 'package:soccer_app/drawer/profile/profile_view_model.dart';
 import 'package:soccer_app/server/model/MyPlayer.dart';
 import 'package:soccer_app/server/service/myplayer_service.dart';
+import 'package:soccer_app/server/service/user_service.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MyPlayerViewModel extends ChangeNotifier {
-  MyPlayer? myPlayer;
+  final ProfileViewModel profileViewModel;
+  List<String>? myPlayerIds;
+  MyPlayer? currentMyPlayer;
   bool isLoading = false;
 
-  MyPlayerViewModel() {
-    _loadMyPlayer();
+  MyPlayerViewModel({required this.profileViewModel}) {
+    _fetchPlayerIdsAndData();
+    debugPrint("my player view model init: list of player ids - $myPlayerIds");
   }
 
-  Future<void> _loadMyPlayer() async {
-    final prefs = await SharedPreferences.getInstance();
-    final playerData = prefs.getString('myPlayer');
-    if (playerData != null) {
-      final jsonData = jsonDecode(playerData) as Map<String, dynamic>;
-      myPlayer = MyPlayer.fromJson(jsonData);
-      notifyListeners();
-    }
-  }
+  Future<void> _fetchPlayerIdsAndData() async {
+    final profile = profileViewModel.profile;
 
-  Future<void> _saveMyPlayer() async {
-    if (myPlayer != null) {
-      final prefs = await SharedPreferences.getInstance();
-      final playerData = jsonEncode(myPlayer!.toJson());
-      await prefs.setString('myPlayer', playerData);
-    }
-  }
+    if (profile == null) return;
 
-  Future<void> fetchMyPlayer(String myPlayerId) async {
     isLoading = true;
     notifyListeners();
 
     try {
-      final fetchedMyPlayer = await MyPlayerService().getMyPlayer(myPlayerId);
-      myPlayer = fetchedMyPlayer;
-      await _saveMyPlayer();
+      debugPrint("ready to get my player ids. my user id: ${profile.id}");
+      myPlayerIds = await UserService().getMyPlayerIds(profile.id);
+      debugPrint("my player ids prepared!!!! $myPlayerIds");
+      if (myPlayerIds != null && myPlayerIds!.isNotEmpty) {
+        await _fetchMyPlayer(myPlayerIds![0]); // 기본으로 첫 번째 플레이어 로드
+      }
     } catch (e) {
-      myPlayer = null;
+      debugPrint("exception occurred getting player ids");
+      myPlayerIds = null;
+      currentMyPlayer = null;
     }
 
     isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> _fetchMyPlayer(String playerId) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      currentMyPlayer = await MyPlayerService().getMyPlayer(playerId);
+    } catch (e) {
+      currentMyPlayer = null;
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  void changePlayer(String playerId) async {
+    await _fetchMyPlayer(playerId);
     notifyListeners();
   }
 
@@ -57,8 +69,7 @@ class MyPlayerViewModel extends ChangeNotifier {
 
     try {
       final createdMyPlayer = await MyPlayerService().createMyPlayer(userId, myPlayerData);
-      myPlayer = createdMyPlayer;
-      await _saveMyPlayer(); // Save newly created player
+      currentMyPlayer = createdMyPlayer;
     } catch (e) {
       // Error handling
     }

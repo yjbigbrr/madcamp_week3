@@ -8,8 +8,8 @@ import 'package:soccer_app/server/model/MyPlayer.dart';
 class MyPlayerService {
   final String baseUrl = BaseUrl.baseUrl;
 
-  Future<MyPlayer> getMyPlayer(String userId) async {
-    final response = await http.get(Uri.parse('$baseUrl/users/$userId/myplayer'));
+  Future<MyPlayer> getMyPlayer(String playerId) async {
+    final response = await http.get(Uri.parse('$baseUrl/myplayers/$playerId'));
 
     debugPrint('getMyPlayer Response status: ${response.statusCode}');
     debugPrint('getMyPlayer Response body: ${response.body}');
