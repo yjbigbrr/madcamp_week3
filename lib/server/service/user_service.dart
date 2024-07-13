@@ -71,20 +71,20 @@ class UserService {
     }
   }
 
-  // 사용자 닉네임 업데이트
-  Future<User?> updateUserNickname(String id, String newNickname) async {
+  // 사용자 업데이트
+  Future<User?> updateUser(String id, Map<String, dynamic> updates) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/users/nickname?id=$id'),
+      Uri.parse('$baseUrl/users?id=$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({'nickname': newNickname}),
+      body: jsonEncode(updates),
     );
 
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('Failed to update user nickname');
+      throw Exception('Failed to update user');
     }
   }
 

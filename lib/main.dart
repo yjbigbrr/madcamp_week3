@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:provider/provider.dart';
+import 'package:soccer_app/drawer/myplayer/myplayer_view_model.dart';
 import 'package:soccer_app/drawer/profile/profile_view_model.dart';
 import 'package:soccer_app/main_view_model.dart';
 import 'package:soccer_app/login/login_screen.dart';
@@ -12,6 +13,7 @@ void main() {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (context) => ProfileViewModel()), // ProfileViewModel 등록
+      ChangeNotifierProvider(create: (context) => MyPlayerViewModel()), // MyPlayerViewModel 등록
     ],
     child: MyApp(),
   ),

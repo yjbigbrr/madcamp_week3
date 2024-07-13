@@ -27,9 +27,9 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] ?? '',
-      password: json['password'] ?? '',
-      nickname: json['nickname'] ?? '',
+      id: json['id'],
+      password: json['password'],
+      nickname: json['nickname'],
       favoriteLeagues: List<String>.from(json['favoriteLeagues'] ?? []),
       favoriteTeams: List<String>.from(json['favoriteTeams'] ?? []),
       favoritePlayers: List<String>.from(json['favoritePlayers'] ?? []),
