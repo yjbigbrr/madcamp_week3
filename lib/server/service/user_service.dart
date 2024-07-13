@@ -43,6 +43,27 @@ class UserService {
   }
 
   // 특정 사용자 조회
+  Future<User?> getUserById(String id) async {
+    final response = await http.get(Uri.parse('$baseUrl/users?Id=$id'));
+
+    debugPrint('getUserById Response status: ${response.statusCode}');
+    debugPrint('getUserById Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      if (jsonResponse is List) {
+        for (var userJson in jsonResponse) {
+          if (userJson['id'] == id) {
+            return User.fromJson(userJson);
+          }
+        }
+      }
+      return null;
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
+
   Future<User?> getUserByKakaoId(String kakaoId) async {
     final response = await http.get(Uri.parse('$baseUrl/users?kakaoId=$kakaoId'));
 

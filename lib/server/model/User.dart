@@ -1,3 +1,5 @@
+import 'package:soccer_app/server/model/FriendRequest.dart';
+
 class User {
   final String id;
   final String password;

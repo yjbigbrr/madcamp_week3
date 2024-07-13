@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:provider/provider.dart';
+import 'package:soccer_app/drawer/friend/friend_page.dart';
 import 'package:soccer_app/drawer/myplayer/myplayer_view_model.dart';
 import 'package:soccer_app/drawer/profile/profile_view_model.dart';
 import 'package:soccer_app/main_view_model.dart';
@@ -155,7 +156,9 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MyPlayerPage()),
+                      MaterialPageRoute(
+                        builder: (context) => FriendPage(userId: profile?.id ?? ''),
+                      ),
                     );
                   },
                 ),
