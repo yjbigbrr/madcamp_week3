@@ -99,6 +99,28 @@ class UserService {
     }
   }
 
+  Future<List<String>> getMyPlayerIds(String userId) async {
+    final url = Uri.parse('$baseUrl/users/$userId/myplayers');
+    final response = await http.get(url);
+
+    debugPrint('getMyPlayerIds Response status: ${response.statusCode}');
+    debugPrint('getMyPlayerIds Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      // 응답 본문이 ID 리스트라면
+      debugPrint('return with status 200! getMyPlayer');
+      final jsonResponse = jsonDecode(response.body);
+      if (jsonResponse is List) {
+        return List<String>.from(jsonResponse);
+      } else {
+        debugPrint('Unexpected response format!!!!');
+        throw Exception('Unexpected response format');
+      }
+    } else {
+      throw Exception('Failed to fetch MyPlayer IDs');
+    }
+  }
+
   // 로그인
   Future<User> login(String id, String password) async {
     final response = await http.get(

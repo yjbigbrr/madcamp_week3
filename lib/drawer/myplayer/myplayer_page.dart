@@ -19,8 +19,7 @@ class MyPlayerPage extends StatelessWidget {
             return Center(child: CircularProgressIndicator());
           }
 
-          if (viewModel.myPlayer == null) {
-            debugPrint("my player is null!!!!!!!!!!!!!!!!!!!!!");
+          if (viewModel.myPlayerIds == null || viewModel.myPlayerIds!.isEmpty) {
             return Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -36,7 +35,30 @@ class MyPlayerPage extends StatelessWidget {
             );
           }
 
-          return MyPlayerDetailView(myPlayer: viewModel.myPlayer!);
+          return Column(
+            children: [
+              if (viewModel.myPlayerIds != null && viewModel.myPlayerIds!.isNotEmpty)
+                DropdownButton<String>(
+                  value: viewModel.myPlayerIds![0],
+                  onChanged: (value) {
+                    if (value != null) {
+                      viewModel.changePlayer(value);
+                    }
+                  },
+                  items: viewModel.myPlayerIds!.map((id) {
+                    return DropdownMenuItem<String>(
+                      value: id,
+                      child: Text(id),
+                    );
+                  }).toList(),
+                ),
+              Expanded(
+                child: viewModel.currentMyPlayer != null
+                    ? MyPlayerDetailView(myPlayer: viewModel.currentMyPlayer!)
+                    : Center(child: Text('No player data available')),
+              ),
+            ],
+          );
         },
       ),
     );
@@ -54,6 +76,7 @@ class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with Single
   String _selectedPosition = '공격수';
   String _selectedPreferredFoot = '오른발';
   Map<String, int> _attributes = {};
+  Map<String, int> _physicalAttributes = {};
 
   @override
   void initState() {
@@ -69,8 +92,17 @@ class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with Single
         : ['dribbling', 'shooting', 'passing', 'firstTouch', 'crossing', 'offTheBall', 'tackling', 'marking', 'defensivePositioning', 'concentration', 'vision'];
 
     for (var attribute in attributes) {
-      _attributes[attribute] = 60; // 기본값으로 60 설정
+      _attributes[attribute] = 60;
     }
+
+    _physicalAttributes = {
+      'strength': 60,
+      'pace': 60,
+      'stamina': 60,
+      'agility': 60,
+      'jumping': 60,
+      'injuryProneness': 60,
+    };
   }
 
   @override
@@ -91,13 +123,13 @@ class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with Single
       name: _nameController.text,
       position: _selectedPosition,
       preferredFoot: _selectedPreferredFoot,
-      overAll: 100, // 기본값
-      strength: _attributes['strength'] ?? 0,
-      pace: _attributes['pace'] ?? 0,
-      stamina: _attributes['stamina'] ?? 0,
-      agility: _attributes['agility'] ?? 0,
-      jumping: _attributes['jumping'] ?? 0,
-      injuryProneness: _attributes['injuryProneness'] ?? 0,
+      overAll: 100,
+      strength: _physicalAttributes['strength'] ?? 0,
+      pace: _physicalAttributes['pace'] ?? 0,
+      stamina: _physicalAttributes['stamina'] ?? 0,
+      agility: _physicalAttributes['agility'] ?? 0,
+      jumping: _physicalAttributes['jumping'] ?? 0,
+      injuryProneness: _physicalAttributes['injuryProneness'] ?? 0,
       dribbling: _attributes['dribbling'],
       shooting: _attributes['shooting'],
       passing: _attributes['passing'],
@@ -199,52 +231,73 @@ class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with Single
         ? ['reflexes', 'aeriel', 'handling', 'communication', 'commandOfArea', 'goalKicks', 'throwing']
         : ['dribbling', 'shooting', 'passing', 'firstTouch', 'crossing', 'offTheBall', 'tackling', 'marking', 'defensivePositioning', 'concentration', 'vision'];
 
-    return ListView.builder(
+    return ListView(
       padding: const EdgeInsets.all(16.0),
-      itemCount: attributes.length,
-      itemBuilder: (context, index) {
-        final attribute = attributes[index];
-        return TextField(
-          controller: TextEditingController(text: _attributes[attribute]?.toString() ?? '60'), // 기본값 60 표시
-          decoration: InputDecoration(labelText: attribute),
-          keyboardType: TextInputType.number,
-          onChanged: (value) {
-            setState(() {
-              _attributes[attribute] = int.tryParse(value) ?? 60; // 입력값을 60으로 초기화
-            });
-          },
-        );
-      },
+      children: [
+        ...attributes.map((attribute) {
+          return TextField(
+            controller: TextEditingController(text: _attributes[attribute]?.toString() ?? '60'),
+            decoration: InputDecoration(labelText: attribute),
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              setState(() {
+                _attributes[attribute] = int.tryParse(value) ?? 60;
+              });
+            },
+          );
+        }).toList(),
+        SizedBox(height: 16),
+        Text('Physical Attributes'),
+        ..._physicalAttributes.keys.map((attribute) {
+          return TextField(
+            controller: TextEditingController(text: _physicalAttributes[attribute]?.toString() ?? '60'),
+            decoration: InputDecoration(labelText: attribute),
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              setState(() {
+                _physicalAttributes[attribute] = int.tryParse(value) ?? 60;
+              });
+            },
+          );
+        }).toList(),
+      ],
     );
   }
 }
 
-class MyPlayerDetailView extends StatelessWidget {
+class MyPlayerDetailView extends StatefulWidget {
   final MyPlayer myPlayer;
 
   MyPlayerDetailView({required this.myPlayer});
 
   @override
+  _MyPlayerDetailViewState createState() => _MyPlayerDetailViewState();
+}
+
+class _MyPlayerDetailViewState extends State<MyPlayerDetailView> {
+  bool _showDetailedAttributes = false;
+
+  @override
   Widget build(BuildContext context) {
-    final data = myPlayer.position == '골키퍼'
+    final data = widget.myPlayer.position == '골키퍼'
         ? {
-      '공배급': myPlayer.goalKicks! * 0.6 + myPlayer.throwing! * 0.3 + myPlayer.communication! * 0.1,
-      '수비조율': myPlayer.commandOfArea! * 0.2 + myPlayer.agility! * 0.2 + myPlayer.communication! * 0.5 + myPlayer.handling! * 0.1,
-      '공중볼': myPlayer.commandOfArea! * 0.1 + myPlayer.aeriel! * 0.6 + myPlayer.jumping! * 0.3,
-      '피지컬': myPlayer.pace * 0.3 + myPlayer.strength * 0.3 + myPlayer.jumping * 0.1 + myPlayer.agility * 0.1 + myPlayer.stamina * 0.2,
-      '선방': myPlayer.reflexes! * 0.5 + myPlayer.agility! * 0.3 + myPlayer.handling! * 0.2,
+      '공배급': widget.myPlayer.goalKicks! * 0.6 + widget.myPlayer.throwing! * 0.3 + widget.myPlayer.communication! * 0.1,
+      '수비조율': widget.myPlayer.commandOfArea! * 0.2 + widget.myPlayer.agility! * 0.2 + widget.myPlayer.communication! * 0.5 + widget.myPlayer.handling! * 0.1,
+      '공중볼': widget.myPlayer.commandOfArea! * 0.1 + widget.myPlayer.aeriel! * 0.6 + widget.myPlayer.jumping! * 0.3,
+      '피지컬': widget.myPlayer.pace * 0.3 + widget.myPlayer.strength * 0.3 + widget.myPlayer.jumping * 0.1 + widget.myPlayer.agility * 0.1 + widget.myPlayer.stamina * 0.2,
+      '선방': widget.myPlayer.reflexes! * 0.5 + widget.myPlayer.agility! * 0.3 + widget.myPlayer.handling! * 0.2,
     }
         : {
-      '개인기': myPlayer.dribbling! * 0.4 + myPlayer.firstTouch! * 0.3 + myPlayer.agility! * 0.3,
-      '슛': myPlayer.strength * 0.3 + myPlayer.shooting! * 0.5 + myPlayer.firstTouch! * 0.2,
-      '패스': myPlayer.passing! * 0.4 + myPlayer.vision! * 0.3 + myPlayer.crossing! * 0.2 + myPlayer.firstTouch! * 0.1,
-      '수비': myPlayer.tackling! * 0.4 + myPlayer.marking! * 0.2 + myPlayer.defensivePositioning! * 0.2 + myPlayer.concentration! * 0.2,
-      '움직임': myPlayer.pace * 0.3 + myPlayer.agility! * 0.2 + (myPlayer.position == '공격수'
-          ? myPlayer.offTheBall! * 0.5
-          : myPlayer.position == '수비수'
-          ? myPlayer.defensivePositioning! * 0.3 + myPlayer.marking! * 0.2
-          : myPlayer.offTheBall! * 0.2 + myPlayer.defensivePositioning! * 0.2 + myPlayer.marking! * 0.1),
-      '피지컬': myPlayer.pace * 0.3 + myPlayer.strength * 0.3 + myPlayer.jumping * 0.1 + myPlayer.agility * 0.1 + myPlayer.stamina * 0.2,
+      '개인기': widget.myPlayer.dribbling! * 0.4 + widget.myPlayer.firstTouch! * 0.3 + widget.myPlayer.agility! * 0.3,
+      '슛': widget.myPlayer.strength * 0.3 + widget.myPlayer.shooting! * 0.5 + widget.myPlayer.firstTouch! * 0.2,
+      '패스': widget.myPlayer.passing! * 0.4 + widget.myPlayer.vision! * 0.3 + widget.myPlayer.crossing! * 0.2 + widget.myPlayer.firstTouch! * 0.1,
+      '수비': widget.myPlayer.tackling! * 0.4 + widget.myPlayer.marking! * 0.2 + widget.myPlayer.defensivePositioning! * 0.2 + widget.myPlayer.concentration! * 0.2,
+      '움직임': widget.myPlayer.pace * 0.3 + widget.myPlayer.agility! * 0.2 + (widget.myPlayer.position == '공격수'
+          ? widget.myPlayer.offTheBall! * 0.5
+          : widget.myPlayer.position == '수비수'
+          ? widget.myPlayer.defensivePositioning! * 0.3 + widget.myPlayer.marking! * 0.2
+          : widget.myPlayer.offTheBall! * 0.2 + widget.myPlayer.defensivePositioning! * 0.2 + widget.myPlayer.marking! * 0.1),
+      '피지컬': widget.myPlayer.pace * 0.3 + widget.myPlayer.strength * 0.3 + widget.myPlayer.jumping * 0.1 + widget.myPlayer.agility * 0.1 + widget.myPlayer.stamina * 0.2,
     };
 
     final features = data.keys.toList();
@@ -256,29 +309,28 @@ class MyPlayerDetailView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 축구공 아이콘과 스타일링된 텍스트
             Row(
               children: [
                 Image.asset(
-                  'assets/images/football.png', // 축구공 아이콘 파일 경로
+                  'assets/images/football.png',
                   width: 40,
                   height: 40,
                 ),
                 SizedBox(width: 10),
                 Text(
-                  'Name: ${myPlayer.name}',
+                  'Name: ${widget.myPlayer.name}',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                 ),
               ],
             ),
             SizedBox(height: 8),
             Text(
-              'Position: ${myPlayer.position}',
+              'Position: ${widget.myPlayer.position}',
               style: TextStyle(fontSize: 18, color: Colors.grey[700]),
             ),
             SizedBox(height: 8),
             Text(
-              'Preferred Foot: ${myPlayer.preferredFoot}',
+              'Preferred Foot: ${widget.myPlayer.preferredFoot}',
               style: TextStyle(fontSize: 18, color: Colors.grey[700]),
             ),
             SizedBox(height: 16.0),
@@ -296,7 +348,7 @@ class MyPlayerDetailView extends StatelessWidget {
               ),
               padding: const EdgeInsets.all(16.0),
               child: SizedBox(
-                height: 300, // RadarChart의 높이를 지정
+                height: 300,
                 child: RadarChart(
                   ticks: [30, 60, 90, 120, 150],
                   features: features,
@@ -304,10 +356,90 @@ class MyPlayerDetailView extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _showDetailedAttributes = !_showDetailedAttributes;
+                });
+              },
+              child: Text(_showDetailedAttributes ? 'Hide Details' : 'Show Details'),
+            ),
+            if (_showDetailedAttributes)
+              Expanded(
+                child: ListView(
+                  children: _buildDetailedAttributes(),
+                ),
+              ),
           ],
         ),
       ),
     );
+  }
+
+  List<Widget> _buildDetailedAttributes() {
+    final detailedAttributes = widget.myPlayer.position == '골키퍼'
+        ? {
+      'Goalkeeper Skills': {
+        'Reflexes': widget.myPlayer.reflexes,
+        'Handling': widget.myPlayer.handling,
+        'Communication': widget.myPlayer.communication,
+        'Command of Area': widget.myPlayer.commandOfArea,
+        'Goal Kicks': widget.myPlayer.goalKicks,
+        'Throwing': widget.myPlayer.throwing,
+        'Aerial': widget.myPlayer.aeriel,
+      },
+      'Physical Attributes': {
+        'Strength': widget.myPlayer.strength,
+        'Pace': widget.myPlayer.pace,
+        'Stamina': widget.myPlayer.stamina,
+        'Agility': widget.myPlayer.agility,
+        'Jumping': widget.myPlayer.jumping,
+        'Injury Proneness': widget.myPlayer.injuryProneness,
+      }
+    }
+        : {
+      'Attacking Skills': {
+        'Dribbling': widget.myPlayer.dribbling,
+        'Shooting': widget.myPlayer.shooting,
+        'First Touch': widget.myPlayer.firstTouch,
+      },
+      'Passing Skills': {
+        'Passing': widget.myPlayer.passing,
+        'Vision': widget.myPlayer.vision,
+        'Crossing': widget.myPlayer.crossing,
+      },
+      'Defensive Skills': {
+        'Tackling': widget.myPlayer.tackling,
+        'Marking': widget.myPlayer.marking,
+        'Defensive Positioning': widget.myPlayer.defensivePositioning,
+        'Concentration': widget.myPlayer.concentration,
+      },
+      'Physical Attributes': {
+        'Strength': widget.myPlayer.strength,
+        'Pace': widget.myPlayer.pace,
+        'Stamina': widget.myPlayer.stamina,
+        'Agility': widget.myPlayer.agility,
+        'Jumping': widget.myPlayer.jumping,
+        'Injury Proneness': widget.myPlayer.injuryProneness,
+      }
+    };
+
+    return detailedAttributes.entries.map((entry) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            entry.key,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          ...entry.value.entries.map((attr) {
+            return Text('${attr.key}: ${attr.value ?? 'N/A'}');
+          }).toList(),
+          SizedBox(height: 16),
+        ],
+      );
+    }).toList();
   }
 }
 
