@@ -43,6 +43,27 @@ class UserService {
   }
 
   // 특정 사용자 조회
+  Future<User?> getUserById(String id) async {
+    final response = await http.get(Uri.parse('$baseUrl/users?Id=$id'));
+
+    debugPrint('getUserById Response status: ${response.statusCode}');
+    debugPrint('getUserById Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      if (jsonResponse is List) {
+        for (var userJson in jsonResponse) {
+          if (userJson['id'] == id) {
+            return User.fromJson(userJson);
+          }
+        }
+      }
+      return null;
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
+
   Future<User?> getUserByKakaoId(String kakaoId) async {
     final response = await http.get(Uri.parse('$baseUrl/users?kakaoId=$kakaoId'));
 
@@ -71,20 +92,20 @@ class UserService {
     }
   }
 
-  // 사용자 닉네임 업데이트
-  Future<User?> updateUserNickname(String id, String newNickname) async {
+  // 사용자 업데이트
+  Future<User?> updateUser(String id, Map<String, dynamic> updates) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/users/nickname?id=$id'),
+      Uri.parse('$baseUrl/users?id=$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({'nickname': newNickname}),
+      body: jsonEncode(updates),
     );
 
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('Failed to update user nickname');
+      throw Exception('Failed to update user');
     }
   }
 
@@ -96,6 +117,28 @@ class UserService {
       return User.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to delete user');
+    }
+  }
+
+  Future<List<String>> getMyPlayerIds(String userId) async {
+    final url = Uri.parse('$baseUrl/users/$userId/myplayers');
+    final response = await http.get(url);
+
+    debugPrint('getMyPlayerIds Response status: ${response.statusCode}');
+    debugPrint('getMyPlayerIds Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      // 응답 본문이 ID 리스트라면
+      debugPrint('return with status 200! getMyPlayer');
+      final jsonResponse = jsonDecode(response.body);
+      if (jsonResponse is List) {
+        return List<String>.from(jsonResponse);
+      } else {
+        debugPrint('Unexpected response format!!!!');
+        throw Exception('Unexpected response format');
+      }
+    } else {
+      throw Exception('Failed to fetch MyPlayer IDs');
     }
   }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:provider/provider.dart';
+import 'package:soccer_app/drawer/friend/friend_page.dart';
+import 'package:soccer_app/drawer/myplayer/myplayer_view_model.dart';
 import 'package:soccer_app/drawer/profile/profile_view_model.dart';
 import 'package:soccer_app/main_view_model.dart';
 import 'package:soccer_app/login/login_screen.dart';
@@ -11,12 +13,24 @@ import 'package:soccer_app/tab1/home_screen.dart'; // 추가
 
 void main() {
   KakaoSdk.init(nativeAppKey: '6cf381adbd9cf31b14c1db80c010a446');  // 실제 네이티브 앱 키로 대체하세요.
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (context) => ProfileViewModel()), // ProfileViewModel 등록
-    ],
-    child: MyApp(),
-  ),
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => ProfileViewModel(),
+        ),
+        ChangeNotifierProxyProvider<ProfileViewModel, MyPlayerViewModel>(
+          create: (context) => MyPlayerViewModel(
+            profileViewModel: Provider.of<ProfileViewModel>(context, listen: false),
+          ),
+          update: (context, profileViewModel, myPlayerViewModel) {
+            return MyPlayerViewModel(profileViewModel: profileViewModel);
+          },
+        ),
+      ],
+      child: MyApp(),
+    ),
   );
 }
 
@@ -122,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                 ),
                 // Other Drawer items here
                 ListTile(
-                  title: Text('Profile'),
+                  title: Text('프로필'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -131,7 +145,27 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   },
                 ),
                 ListTile(
-                  title: Text('My Player'),
+                  title: Text('나만의 선수'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyPlayerPage()),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text('친구'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FriendPage(userId: profile?.id ?? ''),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text('내 예약'),
                   onTap: () {
                     Navigator.push(
                       context,

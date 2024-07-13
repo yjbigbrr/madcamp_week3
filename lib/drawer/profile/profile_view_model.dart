@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:soccer_app/server/service/user_service.dart';
 import 'profile_model.dart';
 import 'dart:convert';
 
@@ -40,17 +41,33 @@ class ProfileViewModel extends ChangeNotifier {
   }) async {
     if (_profile == null) return;
 
+    final userService = UserService();
+
+    final newName = nickname ?? _profile!.nickname;
+    final newLeagues = favoriteLeagues ?? _profile!.favoriteLeagues;
+    final newTeams = favoriteTeams ?? _profile!.favoriteTeams;
+    final newPlayers = favoritePlayers ?? _profile!.favoritePlayers;
+    final newCity = city ?? _profile!.city;
+
     final updatedProfile = MyProfile(
-      nickname: nickname ?? _profile!.nickname,
+      nickname: newName,
       id: _profile!.id,
-      favoriteLeagues: favoriteLeagues ?? _profile!.favoriteLeagues,
-      favoriteTeams: favoriteTeams ?? _profile!.favoriteTeams,
-      favoritePlayers: favoritePlayers ?? _profile!.favoritePlayers,
-      city: city ?? _profile!.city,
+      favoriteLeagues: newLeagues,
+      favoriteTeams: newTeams,
+      favoritePlayers: newPlayers,
+      city: newCity,
       isKakaoLinked: isKakaoLinked ?? _profile!.isKakaoLinked,
     );
 
     await saveProfile(updatedProfile);
+
+    await userService.updateUser(_profile!.id, {
+      'nickname': newName,
+      'favoriteLeagues': newLeagues,
+      'favoriteTeams': newTeams,
+      'favoritePlayers': newPlayers,
+      'city': city,
+    });
   }
 
   Future<void> clearProfile() async {
