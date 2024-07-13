@@ -42,29 +42,51 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     super.dispose();
   }
 
-  void _saveProfile() async {
+  Future<void> _saveProfile() async {
     if (_formKey.currentState?.validate() ?? false) {
-      final updatedProfile = MyProfile(
-        nickname: _nicknameController.text,
-        id: widget.profile.id,
-        favoriteLeagues: _favoriteLeaguesController.text.split(',').map((e) => e.trim()).toList(),
-        favoriteTeams: _favoriteTeamsController.text.split(',').map((e) => e.trim()).toList(),
-        favoritePlayers: _favoritePlayersController.text.split(',').map((e) => e.trim()).toList(),
-        city: _cityController.text,
-        isKakaoLinked: widget.profile.isKakaoLinked,
+      final shouldSave = await showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Confirm'),
+            content: Text('Do you want to save the changes?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text('Save'),
+              ),
+            ],
+          );
+        },
       );
 
-      final profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
-      await profileViewModel.updateProfile(
-        nickname: updatedProfile.nickname,
-        favoriteLeagues: updatedProfile.favoriteLeagues,
-        favoriteTeams: updatedProfile.favoriteTeams,
-        favoritePlayers: updatedProfile.favoritePlayers,
-        city: updatedProfile.city,
-        isKakaoLinked: updatedProfile.isKakaoLinked,
-      );
+      if (shouldSave ?? false) {
+        final updatedProfile = MyProfile(
+          id: widget.profile.id,
+          nickname: _nicknameController.text,
+          favoriteLeagues: _favoriteLeaguesController.text.split(',').map((e) => e.trim()).toList(),
+          favoriteTeams: _favoriteTeamsController.text.split(',').map((e) => e.trim()).toList(),
+          favoritePlayers: _favoritePlayersController.text.split(',').map((e) => e.trim()).toList(),
+          city: _cityController.text,
+          isKakaoLinked: widget.profile.isKakaoLinked,
+        );
 
-      Navigator.pop(context);
+        final profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
+        await profileViewModel.updateProfile(
+          nickname: updatedProfile.nickname,
+          favoriteLeagues: updatedProfile.favoriteLeagues,
+          favoriteTeams: updatedProfile.favoriteTeams,
+          favoritePlayers: updatedProfile.favoritePlayers,
+          city: updatedProfile.city,
+          isKakaoLinked: updatedProfile.isKakaoLinked,
+        );
+
+        Navigator.pop(context);
+      }
     }
   }
 
