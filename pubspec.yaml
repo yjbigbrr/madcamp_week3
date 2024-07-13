@@ -39,6 +39,7 @@ dependencies:
   url_launcher: ^6.0.20 # 추가
   html_unescape: ^2.0.0
   flutter_radar_chart: ^0.2.1
+  flutter_svg: ^0.22.0
 
 dev_dependencies:
   flutter_test:
