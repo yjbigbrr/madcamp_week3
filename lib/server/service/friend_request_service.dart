@@ -2,11 +2,25 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:soccer_app/drawer/friend/friend_model.dart';
 import '../model/FriendRequest.dart';
 import 'base_url.dart';
+import 'package:soccer_app/server/model/User.dart';
 
 class FriendRequestService {
   final String baseUrl = BaseUrl.baseUrl;
+
+  Future<List<Friend>> getFriends(String userId) async {
+    final response = await http.get(Uri.parse('$baseUrl/users/$userId/friends'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonResponse = jsonDecode(response.body);
+      final friends = jsonResponse.map((json) => Friend.fromJson(json)).toList();
+      return friends;
+    } else {
+      throw Exception('Failed to load friends');
+    }
+  }
 
   Future<bool> sendFriendRequest(String senderId, String receiverId) async {
     final response = await http.post(

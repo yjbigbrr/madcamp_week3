@@ -141,6 +141,7 @@ class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with Single
       defensivePositioning: _attributes['defensivePositioning'],
       concentration: _attributes['concentration'],
       reflexes: _attributes['reflexes'],
+      aeriel: _attributes['aeriel'],
       handling: _attributes['handling'],
       communication: _attributes['communication'],
       commandOfArea: _attributes['commandOfArea'],
@@ -402,10 +403,11 @@ class _MyPlayerDetailViewState extends State<MyPlayerDetailView> {
       'Attacking Skills': {
         'Dribbling': widget.myPlayer.dribbling,
         'Shooting': widget.myPlayer.shooting,
-        'First Touch': widget.myPlayer.firstTouch,
+        'Off the ball': widget.myPlayer.offTheBall,
       },
       'Passing Skills': {
         'Passing': widget.myPlayer.passing,
+        'First Touch': widget.myPlayer.firstTouch,
         'Vision': widget.myPlayer.vision,
         'Crossing': widget.myPlayer.crossing,
       },
