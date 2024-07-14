@@ -3,6 +3,7 @@ class Meeting {
   final String title; // 모임의 제목
   final int maxParticipants; // 최대 참여자 수
   final int currentParticipants; // 현재 참여자 수
+  final String hostId;
   final List<String> participants; // 참여자들의 ID 리스트
   final String pubAddress; // 펍의 주소
   final String supportTeam; // 응원하는 팀 이름
@@ -15,6 +16,7 @@ class Meeting {
     required this.title,
     required this.maxParticipants,
     this.currentParticipants = 0,
+    required this.hostId,
     this.participants = const [],
     required this.pubAddress,
     required this.supportTeam,
@@ -30,6 +32,7 @@ class Meeting {
       title: json['title'],
       maxParticipants: json['maxParticipants'],
       currentParticipants: json['currentParticipants'],
+      hostId: json['hostId'],
       participants: List<String>.from(json['participants']),
       pubAddress: json['pubAddress'],
       supportTeam: json['supportTeam'],
@@ -46,6 +49,7 @@ class Meeting {
       'title': title,
       'maxParticipants': maxParticipants,
       'currentParticipants': currentParticipants,
+      'hostId': hostId,
       'participants': participants,
       'pubAddress': pubAddress,
       'supportTeam': supportTeam,

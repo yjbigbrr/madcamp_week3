@@ -5,6 +5,18 @@ import '../model/Meetings.dart';
 
 class MeetingService {
   final String baseUrl = "http://143.248.229.87:3000";
+  // 현재 유저의 모임 불러오기
+  Future<List<Meeting>> getMeetings(String userId) async {
+    final response = await http.get(Uri.parse('$baseUrl/users/$userId/meetings'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonResponse = jsonDecode(response.body);
+      final meetings = jsonResponse.map((json) => Meeting.fromJson(json)).toList();
+      return meetings;
+    } else {
+      throw Exception('Failed to load meetings');
+    }
+  }
 
   // 새로운 모임 생성
   Future<bool> createMeeting(Meeting meeting) async {
