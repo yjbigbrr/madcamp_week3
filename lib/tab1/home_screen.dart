@@ -40,7 +40,7 @@ class HomeScreen extends StatelessWidget {
                 // 뉴스 섹션 추가
                 SizedBox(height: 20), // 구분을 위한 여백
                 NationalTeamsView(),
-                SizedBox(height: 20), // 구분을 위한 여백
+                //SizedBox(height: 20), // 구분을 위한 여백
                 //KleagueTeamsView(),// 국가대표팀 섹션 추가
                 //SizedBox(height: 20), // 구분을 위한 여백
                 //PremierLeagueTeamsView(),
