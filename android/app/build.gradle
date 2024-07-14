@@ -24,8 +24,10 @@ if (flutterVersionName == null) {
 }
 
 android {
+
     namespace = "com.example.soccer_app"
-    compileSdk 33
+    compileSdkVersion 34 // 추가
+
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -39,7 +41,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdk 21
-        targetSdk = flutter.targetSdkVersion
+        targetSdk 34
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }
@@ -55,4 +57,10 @@ android {
 
 flutter {
     source = "../.."
+}
+
+repositories {
+    google()
+    mavenCentral()
+    maven { url 'https://devrepo.kakao.com/nexus/repository/kakaomap-releases/' }
 }
