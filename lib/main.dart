@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:provider/provider.dart';
 import 'package:soccer_app/drawer/friend/friend_page.dart';
+import 'package:soccer_app/drawer/meeting/meeting_page.dart';
 import 'package:soccer_app/drawer/myplayer/myplayer_view_model.dart';
 import 'package:soccer_app/drawer/profile/profile_view_model.dart';
 import 'package:soccer_app/main_view_model.dart';
@@ -9,7 +12,12 @@ import 'package:soccer_app/login/login_screen.dart';
 import 'package:soccer_app/drawer/profile/profile_page.dart';
 import 'package:soccer_app/drawer/myplayer/myplayer_page.dart';
 import 'package:soccer_app/schedule/schedule_page.dart';
-import 'package:soccer_app/tab1/home_screen.dart'; // 추가
+import 'package:soccer_app/schedule/schedule_view_model.dart';
+import 'package:soccer_app/server/service/match_service.dart';
+import 'package:soccer_app/server/service/meetings_service.dart';
+import 'package:soccer_app/tab1/home_screen.dart';
+
+import 'drawer/meeting/meeting_view_model.dart'; // 추가
 
 void main() {
   KakaoSdk.init(nativeAppKey: '6cf381adbd9cf31b14c1db80c010a446');  // 실제 네이티브 앱 키로 대체하세요.
@@ -20,6 +28,7 @@ void main() {
         ChangeNotifierProvider(
           create: (context) => ProfileViewModel(),
         ),
+        ChangeNotifierProvider(create: (context) => MeetingViewModel(MeetingService(), Provider.of<ProfileViewModel>(context, listen: false))),
         ChangeNotifierProxyProvider<ProfileViewModel, MyPlayerViewModel>(
           create: (context) => MyPlayerViewModel(
             profileViewModel: Provider.of<ProfileViewModel>(context, listen: false),
