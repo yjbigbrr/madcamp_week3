@@ -3,8 +3,9 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class ChatPage extends StatefulWidget {
   final String matchId;
+  final String userName; // 추가된 닉네임 정보
 
-  ChatPage({required this.matchId});
+  ChatPage({required this.matchId, required this.userName});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -24,7 +25,6 @@ class _ChatPageState extends State<ChatPage> {
 
   void connectSocket() {
     if (!isConnected) {
-      // 서버 주소와 포트를 확인하세요.
       socket = IO.io('http://143.248.229.87:8080', IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()
@@ -36,23 +36,52 @@ class _ChatPageState extends State<ChatPage> {
       socket.onConnect((_) {
         print('Connected to socket server');
         // 채팅방에 참가하는 이벤트를 보냅니다.
-        socket.emit('join', { 'matchId': widget.matchId });
+        socket.emit('join', {
+          'matchId': widget.matchId,
+          'userName': widget.userName // 닉네임 정보 추가
+        });
       });
 
       // 메시지 수신 처리
       socket.on('message', (data) {
-        setState(() {
-          messages.add(data);
-        });
+        if (data is Map) {
+          String userName = data['userName'] ?? 'Unknown';
+          String message = data['message'] ?? '';
+          setState(() {
+            messages.add('$userName: $message');
+          });
+        }
       });
 
-      // 연결 끊김 처리
+      socket.on('userJoined', (data) {
+        if (data is Map) {
+          final userName = data['userName'];
+          if (userName is String) {
+            print('$userName joined the room');
+            setState(() {
+              messages.add('$userName joined the room');
+            });
+          }
+        }
+      });
+
+      socket.on('userLeft', (data) {
+        if (data is Map) {
+          final userName = data['userName'];
+          if (userName is String) {
+            print('$userName left the room');
+            setState(() {
+              messages.add('$userName left the room');
+            });
+          }
+        }
+      });
+
       socket.onDisconnect((_) {
         print('Disconnected from socket server');
         isConnected = false;
       });
 
-      // 에러 처리
       socket.on('error', (error) {
         print('Socket error: $error');
       });
@@ -61,11 +90,10 @@ class _ChatPageState extends State<ChatPage> {
 
   void sendMessage(String message) {
     if (message.isNotEmpty) {
-      // 메시지를 서버로 전송
-      socket.emit('newMessage', {'matchId': widget.matchId, 'message': message});
-      setState(() {
-        // 화면에 메시지 추가
-        messages.add('Me: $message');
+      socket.emit('newMessage', {
+        'matchId': widget.matchId,
+        'message': message,
+        'userName': widget.userName // 닉네임 정보 추가
       });
       messageController.clear();
     }

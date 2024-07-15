@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:soccer_app/drawer/profile/profile_view_model.dart';
 import 'package:soccer_app/schedule/schedule_detail_page.dart';
 import 'package:soccer_app/schedule/schedule_view_model.dart';
 import 'chat_page.dart';
@@ -11,11 +12,13 @@ class SchedulePage extends StatefulWidget {
 
 class _SchedulePageState extends State<SchedulePage> {
   late ScheduleViewModel _viewModel;
+  late ProfileViewModel _profileViewModel;
 
   @override
   void initState() {
     super.initState();
     _viewModel = Provider.of<ScheduleViewModel>(context, listen: false);
+    _profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 선택된 날짜를 현재 날짜로 설정하고 해당 날짜의 경기 일정을 가져옵니다.
       _viewModel.selectDate(DateTime.now());
@@ -89,7 +92,10 @@ class _SchedulePageState extends State<SchedulePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ChatPage(matchId: match.matchId),
+                                builder: (context) => ChatPage(
+                                  matchId: match.matchId,
+                                  userName: _profileViewModel.profile?.nickname ?? "익명의 축구팬", // 닉네임을 전달합니다.
+                                ),
                               ),
                             );
                           }
