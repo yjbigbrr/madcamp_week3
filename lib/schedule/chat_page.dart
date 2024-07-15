@@ -3,8 +3,9 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class ChatPage extends StatefulWidget {
   final String matchId;
+  final String userName; // 추가된 닉네임 정보
 
-  ChatPage({required this.matchId});
+  ChatPage({required this.matchId, required this.userName});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -14,6 +15,7 @@ class _ChatPageState extends State<ChatPage> {
   late IO.Socket socket;
   List<String> messages = [];
   TextEditingController messageController = TextEditingController();
+  bool isConnected = false;
 
   @override
   void initState() {
@@ -22,33 +24,79 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void connectSocket() {
-    socket = IO.io('http://10.0.2.2:3002', IO.OptionBuilder()
-        .setTransports(['websocket'])
-        .disableAutoConnect()
-        .build());
+    if (!isConnected) {
+      socket = IO.io('http://143.248.229.87:8080', IO.OptionBuilder()
+          .setTransports(['websocket'])
+          .disableAutoConnect()
+          .build());
 
-    socket.connect();
+      socket.connect();
+      isConnected = true;
 
-    socket.onConnect((_) {
-      print('Connected to socket server');
-      socket.emit('join', {'matchId': widget.matchId});
-    });
-
-    socket.on('message', (data) {
-      setState(() {
-        messages.add(data);
+      socket.onConnect((_) {
+        print('Connected to socket server');
+        // 채팅방에 참가하는 이벤트를 보냅니다.
+        socket.emit('join', {
+          'matchId': widget.matchId,
+          'userName': widget.userName // 닉네임 정보 추가
+        });
       });
-    });
 
-    socket.onDisconnect((_) => print('Disconnected from socket server'));
+      // 메시지 수신 처리
+      socket.on('message', (data) {
+        if (data is Map) {
+          String userName = data['userName'] ?? 'Unknown';
+          String message = data['message'] ?? '';
+          setState(() {
+            messages.add('$userName: $message');
+          });
+        }
+      });
+
+      socket.on('userJoined', (data) {
+        if (data is Map) {
+          final userName = data['userName'];
+          if (userName is String) {
+            print('$userName joined the room');
+            setState(() {
+              messages.add('$userName joined the room');
+            });
+          }
+        }
+      });
+
+      socket.on('userLeft', (data) {
+        if (data is Map) {
+          final userName = data['userName'];
+          if (userName is String) {
+            print('$userName left the room');
+            setState(() {
+              messages.add('$userName left the room');
+            });
+          }
+        }
+      });
+
+      socket.onDisconnect((_) {
+        print('Disconnected from socket server');
+        isConnected = false;
+      });
+
+      socket.on('error', (error) {
+        print('Socket error: $error');
+      });
+    }
   }
 
   void sendMessage(String message) {
-    socket.emit('newMessage', {'matchId': widget.matchId, 'message': message});
-    setState(() {
-      messages.add(message);
-    });
-    messageController.clear();
+    if (message.isNotEmpty) {
+      socket.emit('newMessage', {
+        'matchId': widget.matchId,
+        'message': message,
+        'userName': widget.userName // 닉네임 정보 추가
+      });
+      messageController.clear();
+    }
   }
 
   @override
@@ -85,15 +133,16 @@ class _ChatPageState extends State<ChatPage> {
                     controller: messageController,
                     decoration: InputDecoration(
                       hintText: 'Enter message',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
                     ),
                   ),
                 ),
                 IconButton(
                   icon: Icon(Icons.send),
                   onPressed: () {
-                    if (messageController.text.isNotEmpty) {
-                      sendMessage(messageController.text);
-                    }
+                    sendMessage(messageController.text);
                   },
                 ),
               ],

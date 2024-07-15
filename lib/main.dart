@@ -29,7 +29,17 @@ void main() {
         ChangeNotifierProvider(
           create: (context) => ProfileViewModel(),
         ),
-        ChangeNotifierProvider(create: (context) => ScheduleViewModel(MatchService())),
+
+        ChangeNotifierProxyProvider<ProfileViewModel, ScheduleViewModel>(
+          create: (context) => ScheduleViewModel(MatchService(), ""),
+          update: (context, profileViewModel, scheduleViewModel) {
+            if (profileViewModel.profile != null) {
+              return ScheduleViewModel(MatchService(), profileViewModel.profile!.id);
+            }
+            return ScheduleViewModel(MatchService(), "");
+          },
+        ),
+
         ChangeNotifierProvider(create: (context) => MeetingViewModel(MeetingService(), Provider.of<ProfileViewModel>(context, listen: false))),
         ChangeNotifierProxyProvider<ProfileViewModel, MyPlayerViewModel>(
           create: (context) => MyPlayerViewModel(
