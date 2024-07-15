@@ -38,6 +38,7 @@ class ProfileViewModel extends ChangeNotifier {
     List<String>? favoritePlayers,
     String? city,
     bool? isKakaoLinked,
+    String? profilePictureUrl,
   }) async {
     if (_profile == null) return;
 
@@ -48,6 +49,7 @@ class ProfileViewModel extends ChangeNotifier {
     final newTeams = favoriteTeams ?? _profile!.favoriteTeams;
     final newPlayers = favoritePlayers ?? _profile!.favoritePlayers;
     final newCity = city ?? _profile!.city;
+    final newProfilePictureUrl = profilePictureUrl ?? _profile!.profilePictureUrl;
 
     final updatedProfile = MyProfile(
       nickname: newName,
@@ -57,6 +59,7 @@ class ProfileViewModel extends ChangeNotifier {
       favoritePlayers: newPlayers,
       city: newCity,
       isKakaoLinked: isKakaoLinked ?? _profile!.isKakaoLinked,
+      profilePictureUrl: newProfilePictureUrl,
     );
 
     await saveProfile(updatedProfile);
