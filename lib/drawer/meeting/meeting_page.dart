@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../server/model/Meetings.dart';
 import 'meeting_view_model.dart';
 
@@ -33,9 +32,10 @@ class MeetingPage extends StatelessWidget {
                     trailing: meeting.isClosed
                         ? Text('Closed', style: TextStyle(color: Colors.red))
                         : ElevatedButton(
-                      onPressed: () => meetingViewModel.joinMeeting(meeting.id),
-                      child: Text('Join'),
-                    ),
+<<<<<
+                            onPressed: () => meetingViewModel.joinMeeting(meeting.id),
+                            child: Text('Join'),
+                          ),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -76,8 +76,6 @@ class MeetingDetailPage extends StatelessWidget {
             Text('Date: ${meeting.date}', style: TextStyle(fontSize: 18)),
             SizedBox(height: 8),
             Text('Time: ${meeting.time}', style: TextStyle(fontSize: 18)),
-            SizedBox(height: 8),
-            Text('Host ID: ${meeting.hostId}', style: TextStyle(fontSize: 18)),
             SizedBox(height: 8),
             Text('Participants: ${meeting.currentParticipants}/${meeting.maxParticipants}', style: TextStyle(fontSize: 18)),
             SizedBox(height: 8),

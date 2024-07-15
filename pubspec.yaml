@@ -40,6 +40,10 @@ dependencies:
   html_unescape: ^2.0.0
   flutter_radar_chart: ^0.2.1
   flutter_svg: ^0.22.0
+
+  webview_flutter: ^2.0.12
+  web_socket_channel: ^2.1.0  # Add WebSocket dependency
+  fluttertoast: ^8.0.9  # Add fluttertoast dependency
   flutter_native_splash: ^2.0.2
   image_picker: ^0.8.5+3
 
@@ -51,8 +55,6 @@ flutter_native_splash:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  http: ^1.2.1
-  webview_flutter: ^2.0.12
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

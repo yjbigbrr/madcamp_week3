@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-
 import '../../server/model/Meetings.dart';
 import '../../server/service/meetings_service.dart';
 import '../profile/profile_view_model.dart';
@@ -15,6 +14,7 @@ class MeetingViewModel extends ChangeNotifier {
 
   Future<void> fetchUserMeetings() async {
     try {
+
       final userId = profileViewModel.profile?.id ?? '';
       _meetings = await meetingService.getMeetings(userId);
       notifyListeners();
