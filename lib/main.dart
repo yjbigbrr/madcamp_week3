@@ -16,6 +16,7 @@ import 'package:soccer_app/schedule/schedule_view_model.dart';
 import 'package:soccer_app/server/service/match_service.dart';
 import 'package:soccer_app/server/service/meetings_service.dart';
 import 'package:soccer_app/tab1/home_screen.dart';
+import 'package:soccer_app/tab3/tab3_kakao_map.dart';
 
 import 'drawer/meeting/meeting_view_model.dart'; // 추가
 
@@ -199,12 +200,12 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           },
         ),
       ),
-      body: TabBarView(
+       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
           HomeScreen(), // 추가된 부분
           SchedulePage(),
-          Center(child: Text('Profile Page Content')),
+          KakaoMapScreen(), // "펍" 탭에 KakaoMapScreen 추가
         ],
       ),
     );
