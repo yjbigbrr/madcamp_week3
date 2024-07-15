@@ -44,6 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
         favoritePlayers: user.favoritePlayers,
         city: user.city ?? '',
         isKakaoLinked: user.kakaoId != null,
+        profilePictureUrl: ''
       );
 
       await profileViewModel.saveProfile(profile); // Save User as Profile
@@ -79,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
             favoritePlayers: existingUser.favoritePlayers,
             city: existingUser.city ?? '',
             isKakaoLinked: existingUser.kakaoId != null,
+            profilePictureUrl: ''
           );
 
           final profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);

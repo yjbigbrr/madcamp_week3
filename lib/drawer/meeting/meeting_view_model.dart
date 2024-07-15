@@ -14,7 +14,9 @@ class MeetingViewModel extends ChangeNotifier {
 
   Future<void> fetchUserMeetings() async {
     try {
-      _meetings = await meetingService.getAllMeetings();
+
+      final userId = profileViewModel.profile?.id ?? '';
+      _meetings = await meetingService.getMeetings(userId);
       notifyListeners();
     } catch (error) {
       print('Failed to fetch meetings: $error');

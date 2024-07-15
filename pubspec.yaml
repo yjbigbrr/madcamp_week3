@@ -40,9 +40,18 @@ dependencies:
   html_unescape: ^2.0.0
   flutter_radar_chart: ^0.2.1
   flutter_svg: ^0.22.0
+
   webview_flutter: ^2.0.12
   web_socket_channel: ^2.1.0  # Add WebSocket dependency
   fluttertoast: ^8.0.9  # Add fluttertoast dependency
+  flutter_native_splash: ^2.0.2
+  image_picker: ^0.8.5+3
+
+flutter_native_splash:
+  color: "#42a5f5"
+  image: assets/images/splash/menaldo.png
+  android: true
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -75,3 +84,4 @@ flutter:
     - assets/images/kleague/
     - assets/images/laliga/
     - assets/images/premierleague/
+    - assets/images/splash/

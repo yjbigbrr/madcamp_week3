@@ -1,5 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:soccer_app/drawer/profile/profile_model.dart';
 import 'package:soccer_app/drawer/profile/profile_view_model.dart';
@@ -21,6 +22,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   late TextEditingController _favoriteTeamsController;
   late TextEditingController _favoritePlayersController;
   late TextEditingController _cityController;
+  late String _profilePicturePath;
+
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -30,6 +34,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     _favoriteTeamsController = TextEditingController(text: widget.profile.favoriteTeams.join(', '));
     _favoritePlayersController = TextEditingController(text: widget.profile.favoritePlayers.join(', '));
     _cityController = TextEditingController(text: widget.profile.city);
+    _profilePicturePath = widget.profile.profilePictureUrl; // 초기 프로필 사진 경로 설정
   }
 
   @override
@@ -40,6 +45,15 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     _favoritePlayersController.dispose();
     _cityController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _profilePicturePath = pickedFile.path; // 로컬 경로 설정
+      });
+    }
   }
 
   Future<void> _saveProfile() async {
@@ -73,6 +87,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           favoritePlayers: _favoritePlayersController.text.split(',').map((e) => e.trim()).toList(),
           city: _cityController.text,
           isKakaoLinked: widget.profile.isKakaoLinked,
+          profilePictureUrl: _profilePicturePath, // 로컬 파일 경로 사용
         );
 
         final profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
@@ -83,6 +98,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           favoritePlayers: updatedProfile.favoritePlayers,
           city: updatedProfile.city,
           isKakaoLinked: updatedProfile.isKakaoLinked,
+          profilePictureUrl: updatedProfile.profilePictureUrl,
         );
 
         Navigator.pop(context);
@@ -102,6 +118,27 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           key: _formKey,
           child: ListView(
             children: <Widget>[
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundImage: _profilePicturePath.isNotEmpty
+                          ? FileImage(File(_profilePicturePath))
+                          : AssetImage('assets/images/default_profile_picture.png') as ImageProvider,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: IconButton(
+                        icon: Icon(Icons.camera_alt),
+                        onPressed: _pickImage,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
               TextFormField(
                 controller: _nicknameController,
                 decoration: InputDecoration(labelText: 'Nickname'),

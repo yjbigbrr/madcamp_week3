@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'news_section.dart'; // 추가
 import 'national_teams/national_teams_view.dart';
-//import 'kleague_teams/kleague_teams_view.dart';
-//import 'premierleague_teams/premierleague_teams_view.dart';
-//import 'bundeseliga_teams/bundesliga_teams_view.dart';
-//import 'laliga_teams/laliga_teams_view.dart';
+import 'kleague_teams/kleague_teams_view.dart';
+import 'premierleague_teams/premierleague_teams_view.dart';
+import 'bundeseliga_teams/bundesliga_teams_view.dart';
+import 'laliga_teams/laliga_teams_view.dart';
 
 
 class HomeScreen extends StatelessWidget {
