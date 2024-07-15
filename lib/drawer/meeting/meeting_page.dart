@@ -32,7 +32,6 @@ class MeetingPage extends StatelessWidget {
                     trailing: meeting.isClosed
                         ? Text('Closed', style: TextStyle(color: Colors.red))
                         : ElevatedButton(
-<<<<<
                             onPressed: () => meetingViewModel.joinMeeting(meeting.id),
                             child: Text('Join'),
                           ),
