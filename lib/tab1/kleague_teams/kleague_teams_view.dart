@@ -17,7 +17,7 @@ class KleagueTeamsView extends StatelessWidget {
           child: Row(
             children: [
               Image.asset(
-                'assets/images/kleague/kleague.jpg',
+                'assets/images/kleague/kleague.png',
                 width: 24, // 글자 크기와 동일하게 설정
                 height: 24,
               ),
