@@ -32,9 +32,10 @@ class ScheduleViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _matches = await _matchService.getMatchesByDate(date.toIso8601String().substring(0, 10));
+      // '2024-07-14' 형식으로 날짜를 포맷팅
+      String formattedDate = date.toIso8601String().substring(0, 10);
+      _matches = await _matchService.getMatchesByDate(formattedDate);
     } catch (e) {
-      // Handle error if necessary
       print("Error fetching matches: $e");
     } finally {
       isLoading = false;
