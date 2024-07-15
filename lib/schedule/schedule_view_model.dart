@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../server/service/match_service.dart';
 import 'schedule_model.dart';
+import 'package:intl/intl.dart';
 
 class ScheduleViewModel extends ChangeNotifier {
   List<Match> _matches = [];
@@ -23,24 +24,22 @@ class ScheduleViewModel extends ChangeNotifier {
 
   void selectDate(DateTime date) async {
     _selectedDate = date;
-    await _fetchMatchesForDate(date);
+    await _fetchMatchesForDate(_selectedDate.toUtc());
     notifyListeners();
   }
 
   Future<void> _fetchMatchesForDate(DateTime date) async {
     isLoading = true;
     notifyListeners();
-
     try {
-      // '2024-07-14' 형식으로 날짜를 포맷팅
-      String formattedDate = date.toIso8601String().substring(0, 10);
+      // 날짜를 UTC 형식으로 변환하여 서버로 전송
+      String formattedDate = DateFormat('yyyy-MM-dd').format(date.toUtc());
       _matches = await _matchService.getMatchesByDate(formattedDate);
     } catch (e) {
       print("Error fetching matches: $e");
-    } finally {
-      isLoading = false;
-      notifyListeners();
     }
+    isLoading = false;
+    notifyListeners();
   }
 
   Future<void> vote(String matchId, String team) async {

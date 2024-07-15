@@ -14,6 +14,7 @@ class _ChatPageState extends State<ChatPage> {
   late IO.Socket socket;
   List<String> messages = [];
   TextEditingController messageController = TextEditingController();
+  bool isConnected = false;
 
   @override
   void initState() {
@@ -22,33 +23,52 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void connectSocket() {
-    socket = IO.io('http://10.0.2.2:3002', IO.OptionBuilder()
-        .setTransports(['websocket'])
-        .disableAutoConnect()
-        .build());
+    if (!isConnected) {
+      // 서버 주소와 포트를 확인하세요.
+      socket = IO.io('http://143.248.229.87:8080', IO.OptionBuilder()
+          .setTransports(['websocket'])
+          .disableAutoConnect()
+          .build());
 
-    socket.connect();
+      socket.connect();
+      isConnected = true;
 
-    socket.onConnect((_) {
-      print('Connected to socket server');
-      socket.emit('join', {'matchId': widget.matchId});
-    });
-
-    socket.on('message', (data) {
-      setState(() {
-        messages.add(data);
+      socket.onConnect((_) {
+        print('Connected to socket server');
+        // 채팅방에 참가하는 이벤트를 보냅니다.
+        socket.emit('join', { 'matchId': widget.matchId });
       });
-    });
 
-    socket.onDisconnect((_) => print('Disconnected from socket server'));
+      // 메시지 수신 처리
+      socket.on('message', (data) {
+        setState(() {
+          messages.add(data);
+        });
+      });
+
+      // 연결 끊김 처리
+      socket.onDisconnect((_) {
+        print('Disconnected from socket server');
+        isConnected = false;
+      });
+
+      // 에러 처리
+      socket.on('error', (error) {
+        print('Socket error: $error');
+      });
+    }
   }
 
   void sendMessage(String message) {
-    socket.emit('newMessage', {'matchId': widget.matchId, 'message': message});
-    setState(() {
-      messages.add(message);
-    });
-    messageController.clear();
+    if (message.isNotEmpty) {
+      // 메시지를 서버로 전송
+      socket.emit('newMessage', {'matchId': widget.matchId, 'message': message});
+      setState(() {
+        // 화면에 메시지 추가
+        messages.add('Me: $message');
+      });
+      messageController.clear();
+    }
   }
 
   @override
@@ -85,15 +105,16 @@ class _ChatPageState extends State<ChatPage> {
                     controller: messageController,
                     decoration: InputDecoration(
                       hintText: 'Enter message',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
                     ),
                   ),
                 ),
                 IconButton(
                   icon: Icon(Icons.send),
                   onPressed: () {
-                    if (messageController.text.isNotEmpty) {
-                      sendMessage(messageController.text);
-                    }
+                    sendMessage(messageController.text);
                   },
                 ),
               ],
