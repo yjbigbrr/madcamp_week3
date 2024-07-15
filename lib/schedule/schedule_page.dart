@@ -62,7 +62,7 @@ class SchedulePage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ChatPage(matchId: match.id.toString()),
+                                builder: (context) => ChatPage(matchId: match.toString()),
                               ),
                             );
                           },
