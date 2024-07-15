@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'news_section.dart'; // 추가
-import 'national_teams/national_teams_view.dart';
-import 'kleague_teams/kleague_teams_view.dart';
-import 'premierleague_teams/premierleague_teams_view.dart';
-import 'bundeseliga_teams/bundesliga_teams_view.dart';
-import 'laliga_teams/laliga_teams_view.dart';
+// import 'national_teams/national_teams_view.dart';
+// import 'kleague_teams/kleague_teams_view.dart';
+// import 'premierleague_teams/premierleague_teams_view.dart';
+// import 'bundeseliga_teams/bundesliga_teams_view.dart';
+// import 'laliga_teams/laliga_teams_view.dart';
+import 'soccer_teams/soccer_teams_page.dart'; // 통합된 페이지 import
+import 'search_section.dart'; // 추가
 
 
 class HomeScreen extends StatelessWidget {
@@ -39,15 +41,20 @@ class HomeScreen extends StatelessWidget {
                 ),
                 // 뉴스 섹션 추가
                 SizedBox(height: 20), // 구분을 위한 여백
-                NationalTeamsView(),
-                //SizedBox(height: 20), // 구분을 위한 여백
-                //KleagueTeamsView(),// 국가대표팀 섹션 추가
-                //SizedBox(height: 20), // 구분을 위한 여백
-                //PremierLeagueTeamsView(),
-                //SizedBox(height: 20), // 구분을 위한 여백
-                //LaLigaTeamsView(),
-                //SizedBox(height: 20), // 구분을 위한 여백
-                //BundesligaTeamsView(),
+                SearchSection(), // 검색 섹션 추가
+
+                // SizedBox(height: 20), // 구분을 위한 여백
+                // NationalTeamsView(),
+                // SizedBox(height: 20), // 구분을 위한 여백
+                // KleagueTeamsView(),// 국가대표팀 섹션 추가
+                // SizedBox(height: 20), // 구분을 위한 여백
+                // PremierLeagueTeamsView(),
+                // SizedBox(height: 20), // 구분을 위한 여백
+                // LaLigaTeamsView(),
+                // SizedBox(height: 20), // 구분을 위한 여백
+                // BundesligaTeamsView(),
+                SizedBox(height: 20), // 구분을 위한 여백
+                SoccerTeamsPage(), // 통합된 축구팀 페이지 추가
               ],
             ),
           ),
