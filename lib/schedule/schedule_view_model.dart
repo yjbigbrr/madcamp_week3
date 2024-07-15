@@ -1,47 +1,14 @@
 import 'package:flutter/material.dart';
+import '../server/service/match_service.dart';
 import 'schedule_model.dart';
 
 class ScheduleViewModel extends ChangeNotifier {
-  List<Match> _matches = [
-    Match(
-      matchId: "1",
-      date: DateTime(2024, 7, 14),
-      league: 'Premier League',
-      homeTeam: 'Team A',
-      awayTeam: 'Team B',
-      startTime: DateTime(2024, 7, 14, 16, 00),
-      homeTeamScore: 0,
-      awayTeamScore: 0,
-      homeTeamVotes: 10,
-      awayTeamVotes: 15,
-    ),
-    Match(
-      matchId: "2",
-      date: DateTime(2024, 7, 14),
-      league: 'La Liga',
-      homeTeam: 'Team C',
-      awayTeam: 'Team D',
-      startTime: DateTime(2024, 7, 14, 18, 00),
-      homeTeamScore: 0,
-      awayTeamScore: 0,
-      homeTeamVotes: 12,
-      awayTeamVotes: 14,
-    ),
-    Match(
-      matchId: "3",
-      date: DateTime(2024, 7, 15),
-      league: 'Bundesliga',
-      homeTeam: 'Team E',
-      awayTeam: 'Team F',
-      startTime: DateTime(2024, 7, 15, 20, 0),
-      homeTeamScore: 0,
-      awayTeamScore: 0,
-      homeTeamVotes: 8,
-      awayTeamVotes: 9,
-    ),
-  ];
-
+  List<Match> _matches = [];
   DateTime _selectedDate = DateTime.now();
+  final MatchService _matchService;
+  bool isLoading = false;
+
+  ScheduleViewModel(this._matchService);
 
   List<Match> get matches => _matches;
   DateTime get selectedDate => _selectedDate;
@@ -53,8 +20,23 @@ class ScheduleViewModel extends ChangeNotifier {
       match.date.day == _selectedDate.day)
       .toList();
 
-  void selectDate(DateTime date) {
+  void selectDate(DateTime date) async {
     _selectedDate = date;
+    await _fetchMatchesForDate(date);
     notifyListeners();
+  }
+
+  Future<void> _fetchMatchesForDate(DateTime date) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      _matches = await _matchService.getMatchesByDate(date.toIso8601String().substring(0, 10));
+    } catch (e) {
+      print("Error fetching matches: $e");
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }
