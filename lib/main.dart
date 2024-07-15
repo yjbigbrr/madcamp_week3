@@ -28,6 +28,7 @@ void main() {
         ChangeNotifierProvider(
           create: (context) => ProfileViewModel(),
         ),
+        ChangeNotifierProvider(create: (context) => ScheduleViewModel(MatchService())),
         ChangeNotifierProvider(create: (context) => MeetingViewModel(MeetingService(), Provider.of<ProfileViewModel>(context, listen: false))),
         ChangeNotifierProxyProvider<ProfileViewModel, MyPlayerViewModel>(
           create: (context) => MyPlayerViewModel(

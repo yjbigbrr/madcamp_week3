@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:soccer_app/server/service/base_url.dart';
 import '../model/Meetings.dart';
 
 class MeetingService {
-  final String baseUrl = "http://143.248.229.87:3000";
+  final String baseUrl = BaseUrl.baseUrl;
   // 현재 유저의 모임 불러오기
   Future<List<Meeting>> getMeetings(String userId) async {
     final response = await http.get(Uri.parse('$baseUrl/users/$userId/meetings'));
