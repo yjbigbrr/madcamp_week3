@@ -4,6 +4,7 @@ import 'schedule_model.dart';
 class ScheduleViewModel extends ChangeNotifier {
   List<Match> _matches = [
     Match(
+      matchId: "1",
       date: DateTime(2024, 7, 14),
       league: 'Premier League',
       homeTeam: 'Team A',
@@ -11,10 +12,11 @@ class ScheduleViewModel extends ChangeNotifier {
       startTime: DateTime(2024, 7, 14, 16, 00),
       homeTeamScore: 0,
       awayTeamScore: 0,
-      homeTeamPoints: 10,
-      awayTeamPoints: 15,
+      homeTeamVotes: 10,
+      awayTeamVotes: 15,
     ),
     Match(
+      matchId: "2",
       date: DateTime(2024, 7, 14),
       league: 'La Liga',
       homeTeam: 'Team C',
@@ -22,10 +24,11 @@ class ScheduleViewModel extends ChangeNotifier {
       startTime: DateTime(2024, 7, 14, 18, 00),
       homeTeamScore: 0,
       awayTeamScore: 0,
-      homeTeamPoints: 12,
-      awayTeamPoints: 14,
+      homeTeamVotes: 12,
+      awayTeamVotes: 14,
     ),
     Match(
+      matchId: "3",
       date: DateTime(2024, 7, 15),
       league: 'Bundesliga',
       homeTeam: 'Team E',
@@ -33,8 +36,8 @@ class ScheduleViewModel extends ChangeNotifier {
       startTime: DateTime(2024, 7, 15, 20, 0),
       homeTeamScore: 0,
       awayTeamScore: 0,
-      homeTeamPoints: 8,
-      awayTeamPoints: 9,
+      homeTeamVotes: 8,
+      awayTeamVotes: 9,
     ),
   ];
 
