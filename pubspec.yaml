@@ -46,6 +46,7 @@ dependencies:
   fluttertoast: ^8.0.9  # Add fluttertoast dependency
   flutter_native_splash: ^2.0.2
   image_picker: ^0.8.5+3
+  intl: ^0.17.0
 
 flutter_native_splash:
   color: "#42a5f5"
