@@ -17,38 +17,31 @@ class MatchService {
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       final matches = data.map((match) => Match.fromJson(match)).toList();
-      debugPrint(matches[0].matchId);
       return matches;
     } else {
       throw Exception('Failed to load matches');
     }
   }
 
-  Future<void> vote(String matchId, String team, String token) async {
+  Future<void> vote(String matchId, String team, String userId) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/match/$matchId/vote'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: json.encode({'team': team}),
+      Uri.parse('$baseUrl/match/vote/$matchId/$team/$userId'),
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode != 201) {
       throw Exception('Failed to vote');
     }
   }
 
-  Future<void> addUserToWaitList(String matchId, String token) async {
+  Future<void> addUserToWaitList(String matchId, String userId) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/match/$matchId/wait'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+      Uri.parse('$baseUrl/match/wait/$matchId/$userId'),
     );
 
-    if (response.statusCode != 200) {
+    debugPrint('addUserToWaitList Response status: ${response.statusCode}');
+    debugPrint('addUserToWaitList Response body: ${response.body}');
+
+    if (response.statusCode != 201) {
       throw Exception('Failed to add user to wait list');
     }
   }
