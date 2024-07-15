@@ -1,6 +1,5 @@
 class Match {
   final String matchId;
-  final DateTime date;
   final String league;
   final String homeTeam;
   final String awayTeam;
@@ -9,10 +8,11 @@ class Match {
   int awayTeamScore;
   int homeTeamVotes;
   int awayTeamVotes;
+  final List<String>? homeTeamVoters;
+  final List<String>? awayTeamVoters;
 
   Match({
     required this.matchId,
-    required this.date,
     required this.league,
     required this.homeTeam,
     required this.awayTeam,
@@ -21,12 +21,13 @@ class Match {
     this.awayTeamScore = 0,
     this.homeTeamVotes = 0,
     this.awayTeamVotes = 0,
+    this.homeTeamVoters,
+    this.awayTeamVoters,
   });
 
   factory Match.fromJson(Map<String, dynamic> json) {
     return Match(
       matchId: json['_id'],
-      date: DateTime.parse(json['date']),
       league: json['league'],
       homeTeam: json['homeTeam'],
       awayTeam: json['awayTeam'],
@@ -35,6 +36,8 @@ class Match {
       awayTeamScore: json['awayTeamScore'],
       homeTeamVotes: json['homeTeamVotes'],
       awayTeamVotes: json['awayTeamVotes'],
+      homeTeamVoters: List<String>.from(json['homeTeamVoters'] ?? []),
+      awayTeamVoters: List<String>.from(json['awayTeamVoters'] ?? []),
     );
   }
 }
