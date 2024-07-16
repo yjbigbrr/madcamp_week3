@@ -47,7 +47,8 @@ dependencies:
   flutter_native_splash: ^2.0.2
   image_picker: ^0.8.5+3
   intl: ^0.17.0
-
+  youtube_player_flutter: ^8.0.0 
+  
 flutter_native_splash:
   color: "#42a5f5"
   image: assets/images/splash/menaldo.png
