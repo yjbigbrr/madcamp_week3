@@ -1,5 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'news_section.dart'; // 추가
+// import 'national_teams/national_teams_view.dart';
+// import 'kleague_teams/kleague_teams_view.dart';
+// import 'premierleague_teams/premierleague_teams_view.dart';
+// import 'bundeseliga_teams/bundesliga_teams_view.dart';
+// import 'laliga_teams/laliga_teams_view.dart';
+import 'soccer_teams/soccer_teams_page.dart'; // 통합된 페이지 import
+import 'search_section.dart'; // 추가
+//import 'highlight_section.dart';
 import 'package:http/http.dart' as http;
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -66,7 +75,17 @@ class HomeScreen extends StatelessWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                HighlightSection(), // 하이라이트 섹션 추가
+                Container(
+                  height: 200, // 높이를 설정하여 하나의 이미지가 크게 보이도록 설정
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: <Widget>[
+                      _buildPromotionCard(context, 'assets/images/spotvnow.png'),
+                      _buildPromotionCard(context, 'assets/images/spotvnow1.jpg'),
+                    ],
+                  ),
+                ),
+                //HighlightSection(), // 하이라이트 섹션 추가
                 SizedBox(height: 20), // 구분을 위한 여백
                 Container(
                   height: 500, // 섹션 높이 설정
