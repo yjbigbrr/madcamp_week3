@@ -190,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MyPlayerPage()),
+                      MaterialPageRoute(builder: (context) => MeetingPage()),
                     );
                   },
                 ),
@@ -210,12 +210,12 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           },
         ),
       ),
-      body: TabBarView(
+       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
           HomeScreen(), // 추가된 부분
           SchedulePage(),
-          KakaoMapScreen()
+          KakaoMapScreen(), // "펍" 탭에 KakaoMapScreen 추가
         ],
       ),
     );

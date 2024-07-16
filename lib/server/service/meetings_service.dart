@@ -10,6 +10,9 @@ class MeetingService {
   Future<List<Meeting>> getMeetings(String userId) async {
     final response = await http.get(Uri.parse('$baseUrl/users/$userId/meetings'));
 
+    debugPrint('getMeetings Response status: ${response.statusCode}');
+    debugPrint('getMeetings Response body: ${response.body}');
+
     if (response.statusCode == 200) {
       final List<dynamic> jsonResponse = jsonDecode(response.body);
       final meetings = jsonResponse.map((json) => Meeting.fromJson(json)).toList();

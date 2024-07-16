@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class YouTubeService {
-  static const String apiKey = 'AIzaSyDbSymv-c1W9vxvcZOxh4nldK7xtoSDbGg';
+  static const String apiKey = 'AIzaSyD6fLY9QEIa8s99jgwQ2RUm7zpPR48icXs';
 
   static Future<List<Map<String, String>>> fetchVideos(String query) async {
     final Uri url = Uri.https(
