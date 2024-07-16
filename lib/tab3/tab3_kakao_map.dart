@@ -61,7 +61,7 @@ void _requestAllMeetings() {
    void _initializeWebSocket() {
     try {
       print('Attempting to connect to WebSocket...');
-      channel = IOWebSocketChannel.connect('ws://10.0.2.2:3001'); // 포트 확인
+      channel = IOWebSocketChannel.connect('ws://10.0.2.2:3000'); // 포트 확인
        print('Attempting to connect to WebSocket2...');
       channel?.stream.listen((message) {
         print('Received: $message');
@@ -402,8 +402,10 @@ setState(() {
   _startDateTime = null;
   _endDateTime = null;
 });
-
-channel?.sink.add(jsonEncode(newMeeting.toJson())); // WebSocket으로 새로운 모임 정보 전송
+channel?.sink.add(jsonEncode({
+  'event': 'createMeeting',
+  'data': newMeeting.toJson()
+})); // WebSocket으로 새로운 모임 정보 전송 // WebSocket으로 새로운 모임 정보 전송
 
 Navigator.of(context).pop();}
 void _joinMeeting(String meetingId) {
