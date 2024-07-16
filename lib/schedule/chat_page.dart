@@ -25,7 +25,7 @@ class _ChatPageState extends State<ChatPage> {
 
   void connectSocket() {
     if (!isConnected) {
-      socket = IO.io('http://143.248.229.87:8080', IO.OptionBuilder()
+      socket = IO.io('http://143.248.229.171:3001', IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()
           .build());

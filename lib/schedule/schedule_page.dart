@@ -20,7 +20,6 @@ class _SchedulePageState extends State<SchedulePage> {
     _viewModel = Provider.of<ScheduleViewModel>(context, listen: false);
     _profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // 선택된 날짜를 현재 날짜로 설정하고 해당 날짜의 경기 일정을 가져옵니다.
       _viewModel.selectDate(DateTime.now());
     });
   }
@@ -36,7 +35,7 @@ class _SchedulePageState extends State<SchedulePage> {
           return Column(
             children: [
               Container(
-                height: 60, // 날짜 선택 칸의 세로 길이를 줄임
+                height: 60,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: 7,
@@ -75,31 +74,23 @@ class _SchedulePageState extends State<SchedulePage> {
                     final match = viewModel.matchesForSelectedDate[index];
                     final now = DateTime.now();
                     final isBeforeStartTime = match.startTime.difference(now).inMinutes > 60;
+                    final isUserInWaitList = false;
+
                     return ListTile(
                       leading: Icon(Icons.sports_soccer),
                       title: Text('${match.homeTeam} vs ${match.awayTeam}'),
-                      subtitle: Text('${match.league} - ${match.startTime.hour}:${match.startTime.minute}'),
+                      subtitle: Text('${match.league} - ${match.startTime.toLocal().hour}:${match.startTime.toLocal().minute}'),
                       trailing: ElevatedButton(
-                        onPressed: () async {
-                          if (isBeforeStartTime) {
-                            try {
-                              await viewModel.addUserToWaitList(match.matchId);
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('관전 예약이 완료되었습니다.')));
-                            } catch (e) {
+                        onPressed: isBeforeStartTime && !isUserInWaitList ? () async {
+                          try {
+                            await viewModel.addUserToWaitList(match.matchId);
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('관전 예약이 완료되었습니다.')));
+                          } catch (e) {
+                            if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('관전 예약에 실패했습니다.')));
                             }
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ChatPage(
-                                  matchId: match.matchId,
-                                  userName: _profileViewModel.profile?.nickname ?? "익명의 축구팬", // 닉네임을 전달합니다.
-                                ),
-                              ),
-                            );
                           }
-                        },
+                        } : null,
                         child: Text(isBeforeStartTime ? '관전 예약' : '응원하기'),
                       ),
                       onTap: () {
@@ -121,6 +112,8 @@ class _SchedulePageState extends State<SchedulePage> {
     );
   }
 }
+
+
 // import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart';
 // import 'package:soccer_app/schedule/schedule_view_model.dart';
