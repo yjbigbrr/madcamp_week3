@@ -22,7 +22,6 @@ import 'drawer/meeting/meeting_view_model.dart'; // 추가
 
 void main() {
   KakaoSdk.init(nativeAppKey: '6cf381adbd9cf31b14c1db80c010a446');  // 실제 네이티브 앱 키로 대체하세요.
-
   runApp(
     MultiProvider(
       providers: [

@@ -39,17 +39,16 @@ dependencies:
   url_launcher: ^6.0.20 # 추가
   html_unescape: ^2.0.0
   flutter_radar_chart: ^0.2.1
-  flutter_svg: ^0.22.0
+  flutter_svg: ^2.0.10+1
   socket_io_client: ^3.0.0-beta.2
   webview_flutter: ^2.0.12
-  web_socket_channel: ^2.1.0  # Add WebSocket dependency
+  web_socket_channel: ^3.0.0  # Add WebSocket dependency
   fluttertoast: ^8.0.9  # Add fluttertoast dependency
   flutter_native_splash: ^2.0.2
-  image_picker: ^0.8.5+3
-  intl: ^0.17.0
-
-  youtube_player_flutter: ^8.1.2
-
+  image_picker: ^1.1.2
+  intl: ^0.19.0
+  youtube_player_flutter: ^9.0.1
+  timezone: ^0.9.4
 flutter_native_splash:
   color: "#42a5f5"
   image: assets/images/splash/menaldo.png
@@ -63,7 +62,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

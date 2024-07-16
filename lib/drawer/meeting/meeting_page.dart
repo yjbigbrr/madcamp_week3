@@ -4,51 +4,56 @@ import 'package:provider/provider.dart';
 import '../../server/model/Meetings.dart';
 import 'meeting_view_model.dart';
 
-class MeetingPage extends StatelessWidget {
+class MeetingPage extends StatefulWidget {
+  @override
+  _MeetingPageState createState() => _MeetingPageState();
+}
+
+class _MeetingPageState extends State<MeetingPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch user meetings when the page is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final meetingViewModel = Provider.of<MeetingViewModel>(context, listen: false);
+      meetingViewModel.fetchUserMeetings();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final meetingViewModel = Provider.of<MeetingViewModel>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('My Meetings'),
       ),
-      body: FutureBuilder(
-        future: meetingViewModel.fetchUserMeetings(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Failed to load meetings'));
-          } else {
-            return ListView.builder(
-              itemCount: meetingViewModel.meetings.length,
-              itemBuilder: (context, index) {
-                final meeting = meetingViewModel.meetings[index];
-                return Card(
-                  child: ListTile(
-                    title: Text(meeting.title),
-                    subtitle: Text('Date: ${meeting.date}\nTime: ${meeting.time}'),
-                    trailing: meeting.isClosed
-                        ? Text('Closed', style: TextStyle(color: Colors.red))
-                        : ElevatedButton(
-
-                            onPressed: () => meetingViewModel.joinMeeting(meeting.id),
-                            child: Text('Join'),
-                          ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MeetingDetailPage(meeting: meeting),
-                        ),
-                      );
-                    },
+      body: Consumer<MeetingViewModel>(
+        builder: (context, meetingViewModel, child) {
+          return ListView.builder(
+            itemCount: meetingViewModel.meetings.length,
+            itemBuilder: (context, index) {
+              final meeting = meetingViewModel.meetings[index];
+              return Card(
+                child: ListTile(
+                  title: Text(meeting.title),
+                  subtitle: Text('Date: ${meeting.date}\nTime: ${meeting.time}'),
+                  trailing: meeting.isClosed
+                      ? Text('Closed', style: TextStyle(color: Colors.red))
+                      : ElevatedButton(
+                    onPressed: () => meetingViewModel.joinMeeting(meeting.id),
+                    child: Text('Join'),
                   ),
-                );
-              },
-            );
-          }
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MeetingDetailPage(meeting: meeting),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          );
         },
       ),
     );
