@@ -20,6 +20,7 @@ class _SchedulePageState extends State<SchedulePage> {
     _viewModel = Provider.of<ScheduleViewModel>(context, listen: false);
     _profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint("What time is it now??????????? ${DateTime.now()}");
       _viewModel.selectDate(DateTime.now());
     });
   }
@@ -73,15 +74,23 @@ class _SchedulePageState extends State<SchedulePage> {
                   itemBuilder: (context, index) {
                     final match = viewModel.matchesForSelectedDate[index];
                     final now = DateTime.now();
-                    final isBeforeStartTime = match.startTime.difference(now).inMinutes > 60;
-                    final isUserInWaitList = false;
+                    final startTime = match.startTime;
+                    final oneHourBeforeStart = startTime.subtract(Duration(hours: 1));
+                    final fourHoursAfterStart = startTime.add(Duration(hours: 4));
+
+                    final isBeforeOneHour = now.isBefore(oneHourBeforeStart);
+                    final isDuringMatch = !now.isBefore(startTime) && now.isBefore(fourHoursAfterStart);
+                    final isAfterFourHours = now.isAfter(fourHoursAfterStart);
 
                     return ListTile(
                       leading: Icon(Icons.sports_soccer),
                       title: Text('${match.homeTeam} vs ${match.awayTeam}'),
-                      subtitle: Text('${match.league} - ${match.startTime.toLocal().hour}:${match.startTime.toLocal().minute}'),
-                      trailing: ElevatedButton(
-                        onPressed: isBeforeStartTime && !isUserInWaitList ? () async {
+                      subtitle: Text(
+                          '${match.league} - ${match.startTime.toLocal().hour}:${match.startTime.toLocal().minute}'
+                      ),
+                      trailing: isBeforeOneHour
+                          ? ElevatedButton(
+                        onPressed: () async {
                           try {
                             await viewModel.addUserToWaitList(match.matchId);
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('관전 예약이 완료되었습니다.')));
@@ -90,9 +99,18 @@ class _SchedulePageState extends State<SchedulePage> {
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('관전 예약에 실패했습니다.')));
                             }
                           }
-                        } : null,
-                        child: Text(isBeforeStartTime ? '관전 예약' : '응원하기'),
-                      ),
+                        },
+                        child: Text('관전 예약'),
+                      )
+                          : isDuringMatch
+                          ? ElevatedButton(
+                        onPressed: () {
+                          // Action for cheering
+                          // Implement your cheering logic here
+                        },
+                        child: Text('응원하기'),
+                      )
+                          : Text('경기 종료', style: TextStyle(color: Colors.grey)),
                       onTap: () {
                         Navigator.push(
                           context,
