@@ -75,18 +75,17 @@ class _SchedulePageState extends State<SchedulePage> {
                     final match = viewModel.matchesForSelectedDate[index];
                     final now = DateTime.now();
                     final startTime = match.startTime;
-                    final oneHourBeforeStart = startTime.subtract(Duration(hours: 1));
-                    final fourHoursAfterStart = startTime.add(Duration(hours: 4));
+                    final oneHourBeforeStart = startTime.subtract(Duration(hours: 10));
+                    final fourHoursAfterStart = startTime.subtract(Duration(hours: 6));
 
                     final isBeforeOneHour = now.isBefore(oneHourBeforeStart);
-                    final isDuringMatch = !now.isBefore(startTime) && now.isBefore(fourHoursAfterStart);
-                    final isAfterFourHours = now.isAfter(fourHoursAfterStart);
+                    final isDuringMatch = !now.isBefore(oneHourBeforeStart) && now.isBefore(fourHoursAfterStart);
 
                     return ListTile(
                       leading: Icon(Icons.sports_soccer),
                       title: Text('${match.homeTeam} vs ${match.awayTeam}'),
                       subtitle: Text(
-                          '${match.league} - ${match.startTime.toLocal().hour}:${match.startTime.toLocal().minute}'
+                          '${match.league} - ${match.startTime.hour}:${match.startTime.minute}'
                       ),
                       trailing: isBeforeOneHour
                           ? ElevatedButton(
@@ -105,8 +104,15 @@ class _SchedulePageState extends State<SchedulePage> {
                           : isDuringMatch
                           ? ElevatedButton(
                         onPressed: () {
-                          // Action for cheering
-                          // Implement your cheering logic here
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatPage(
+                                matchId: match.matchId,
+                                userName: _profileViewModel.profile?.nickname ?? "익명의 축구팬", // 닉네임을 전달합니다.
+                              ),
+                            ),
+                          );
                         },
                         child: Text('응원하기'),
                       )
