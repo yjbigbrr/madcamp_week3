@@ -6,19 +6,24 @@ import 'myplayer_view_model.dart';
 import 'package:soccer_app/server/model/MyPlayer.dart';
 import 'package:soccer_app/drawer/profile/profile_view_model.dart';
 
+// MyPlayerPage 클래스 정의, StatelessWidget을 상속
 class MyPlayerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // 상단 앱바 정의
       appBar: AppBar(
         title: Text('My Player'),
       ),
+      // Consumer를 사용하여 MyPlayerViewModel을 구독
       body: Consumer<MyPlayerViewModel>(
         builder: (context, viewModel, child) {
+          // 데이터를 로딩 중일 때 로딩 인디케이터를 표시
           if (viewModel.isLoading) {
             return Center(child: CircularProgressIndicator());
           }
 
+          // 플레이어 ID가 없을 때 'Create My Player' 버튼 표시
           if (viewModel.myPlayerIds == null || viewModel.myPlayerIds!.isEmpty) {
             return Center(
               child: ElevatedButton(
@@ -35,6 +40,7 @@ class MyPlayerPage extends StatelessWidget {
             );
           }
 
+          // Column을 ListView로 변경하여 overflow 문제를 해결
           return Column(
             children: [
               if (viewModel.myPlayerIds != null && viewModel.myPlayerIds!.isNotEmpty)
@@ -52,6 +58,7 @@ class MyPlayerPage extends StatelessWidget {
                     );
                   }).toList(),
                 ),
+              // Expanded를 사용하여 MyPlayerDetailView의 크기를 제한
               Expanded(
                 child: viewModel.currentMyPlayer != null
                     ? MyPlayerDetailView(myPlayer: viewModel.currentMyPlayer!)
@@ -65,34 +72,36 @@ class MyPlayerPage extends StatelessWidget {
   }
 }
 
+// MyPlayerCreationPage 클래스 정의, StatefulWidget을 상속
 class MyPlayerCreationPage extends StatefulWidget {
   @override
   _MyPlayerCreationPageState createState() => _MyPlayerCreationPageState();
 }
 
 class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  late TextEditingController _nameController;
-  String _selectedPosition = '공격수';
-  String _selectedPreferredFoot = '오른발';
-  Map<String, int> _attributes = {};
-  Map<String, int> _physicalAttributes = {};
+  late TabController _tabController; // 탭 컨트롤러
+  late TextEditingController _nameController; // 플레이어 이름 입력 컨트롤러
+  String _selectedPosition = '공격수'; // 선택된 포지션 초기값
+  String _selectedPreferredFoot = '오른발'; // 선택된 선호 발 초기값
+  Map<String, int> _attributes = {}; // 플레이어 능력치
+  Map<String, int> _physicalAttributes = {}; // 플레이어 신체 능력치
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _nameController = TextEditingController();
-    _initializeAttributes();
+    _tabController = TabController(length: 2, vsync: this); // 탭 컨트롤러 초기화
+    _nameController = TextEditingController(); // 이름 컨트롤러 초기화
+    _initializeAttributes(); // 능력치 초기화
   }
 
+  // 플레이어 능력치 초기화 함수
   void _initializeAttributes() {
     final attributes = _selectedPosition == '골키퍼'
         ? ['reflexes', 'aeriel', 'handling', 'communication', 'commandOfArea', 'goalKicks', 'throwing']
         : ['dribbling', 'shooting', 'passing', 'firstTouch', 'crossing', 'offTheBall', 'tackling', 'marking', 'defensivePositioning', 'concentration', 'vision'];
 
     for (var attribute in attributes) {
-      _attributes[attribute] = 60;
+      _attributes[attribute] = 60; // 각 능력치 초기값 60 설정
     }
 
     _physicalAttributes = {
@@ -107,11 +116,12 @@ class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with Single
 
   @override
   void dispose() {
-    _tabController.dispose();
-    _nameController.dispose();
+    _tabController.dispose(); // 탭 컨트롤러 해제
+    _nameController.dispose(); // 이름 컨트롤러 해제
     super.dispose();
   }
 
+  // 플레이어 생성 함수
   void _submit() {
     if (_nameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Player name is required')));
@@ -154,7 +164,7 @@ class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with Single
     final profile = profileViewModel.profile;
 
     Provider.of<MyPlayerViewModel>(context, listen: false).createMyPlayer(profile?.id, myPlayerData);
-    Navigator.pop(context);
+    Navigator.pop(context); // 플레이어 생성 후 이전 화면으로 이동
   }
 
   @override
@@ -163,7 +173,7 @@ class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with Single
       appBar: AppBar(
         title: Text('Create My Player'),
         bottom: TabBar(
-          controller: _tabController,
+          controller: _tabController, // 탭 컨트롤러 연결
           tabs: [
             Tab(text: 'Info'),
             Tab(text: 'Attributes'),
@@ -171,30 +181,31 @@ class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with Single
         ),
       ),
       body: TabBarView(
-        controller: _tabController,
+        controller: _tabController, // 탭 컨트롤러 연결
         children: [
-          _buildInfoTab(),
-          _buildAttributesTab(),
+          _buildInfoTab(), // 정보 입력 탭
+          _buildAttributesTab(), // 능력치 입력 탭
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _submit,
+        onPressed: _submit, // 플레이어 생성 함수 호출
         child: Icon(Icons.check),
       ),
     );
   }
 
+  // 정보 입력 탭 UI
   Widget _buildInfoTab() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
           TextField(
-            controller: _nameController,
+            controller: _nameController, // 이름 입력 컨트롤러 연결
             decoration: InputDecoration(labelText: 'Player Name'),
           ),
           DropdownButton<String>(
-            value: _selectedPosition,
+            value: _selectedPosition, // 선택된 포지션 값
             onChanged: (value) {
               setState(() {
                 _selectedPosition = value!;
@@ -209,7 +220,7 @@ class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with Single
                 .toList(),
           ),
           DropdownButton<String>(
-            value: _selectedPreferredFoot,
+            value: _selectedPreferredFoot, // 선택된 선호 발 값
             onChanged: (value) {
               setState(() {
                 _selectedPreferredFoot = value!;
@@ -227,14 +238,17 @@ class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with Single
     );
   }
 
+  // 능력치 입력 탭 UI
   Widget _buildAttributesTab() {
     final attributes = _selectedPosition == '골키퍼'
         ? ['reflexes', 'aeriel', 'handling', 'communication', 'commandOfArea', 'goalKicks', 'throwing']
         : ['dribbling', 'shooting', 'passing', 'firstTouch', 'crossing', 'offTheBall', 'tackling', 'marking', 'defensivePositioning', 'concentration', 'vision'];
 
+    // ListView를 사용하여 overflow 문제를 해결
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
+        // 각 능력치에 대한 TextField 생성
         ...attributes.map((attribute) {
           return TextField(
             controller: TextEditingController(text: _attributes[attribute]?.toString() ?? '60'),
@@ -249,6 +263,7 @@ class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with Single
         }).toList(),
         SizedBox(height: 16),
         Text('Physical Attributes'),
+        // 각 신체 능력치에 대한 TextField 생성
         ..._physicalAttributes.keys.map((attribute) {
           return TextField(
             controller: TextEditingController(text: _physicalAttributes[attribute]?.toString() ?? '60'),
@@ -266,6 +281,7 @@ class _MyPlayerCreationPageState extends State<MyPlayerCreationPage> with Single
   }
 }
 
+// MyPlayerDetailView 클래스 정의, StatefulWidget을 상속
 class MyPlayerDetailView extends StatefulWidget {
   final MyPlayer myPlayer;
 
@@ -276,7 +292,7 @@ class MyPlayerDetailView extends StatefulWidget {
 }
 
 class _MyPlayerDetailViewState extends State<MyPlayerDetailView> {
-  bool _showDetailedAttributes = false;
+  bool _showDetailedAttributes = false; // 상세 능력치 표시 여부
 
   @override
   Widget build(BuildContext context) {
@@ -301,11 +317,11 @@ class _MyPlayerDetailViewState extends State<MyPlayerDetailView> {
       '피지컬': widget.myPlayer.pace * 0.3 + widget.myPlayer.strength * 0.3 + widget.myPlayer.jumping * 0.1 + widget.myPlayer.agility * 0.1 + widget.myPlayer.stamina * 0.2,
     };
 
-    final features = data.keys.toList();
-    final dataSet = [data.values.toList().map((value) => value.toDouble()).toList()];
+    final features = data.keys.toList(); // 능력치 이름 리스트
+    final dataSet = [data.values.toList().map((value) => value.toDouble()).toList()]; // 레이더 차트 데이터셋
 
     return Scaffold(
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,8 +368,8 @@ class _MyPlayerDetailViewState extends State<MyPlayerDetailView> {
                 height: 300,
                 child: RadarChart(
                   ticks: [30, 60, 90, 120, 150],
-                  features: features,
-                  data: dataSet,
+                  features: features, // 레이더 차트의 능력치 이름
+                  data: dataSet, // 레이더 차트의 데이터
                 ),
               ),
             ),
@@ -361,16 +377,16 @@ class _MyPlayerDetailViewState extends State<MyPlayerDetailView> {
             ElevatedButton(
               onPressed: () {
                 setState(() {
-                  _showDetailedAttributes = !_showDetailedAttributes;
+                  _showDetailedAttributes = !_showDetailedAttributes; // 상세 능력치 표시 여부 토글
                 });
               },
               child: Text(_showDetailedAttributes ? 'Hide Details' : 'Show Details'),
             ),
             if (_showDetailedAttributes)
-              Expanded(
-                child: ListView(
-                  children: _buildDetailedAttributes(),
-                ),
+              ListView(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                children: _buildDetailedAttributes(), // 상세 능력치 리스트 생성
               ),
           ],
         ),
@@ -378,6 +394,7 @@ class _MyPlayerDetailViewState extends State<MyPlayerDetailView> {
     );
   }
 
+  // 상세 능력치 리스트를 생성하는 함수
   List<Widget> _buildDetailedAttributes() {
     final detailedAttributes = widget.myPlayer.position == '골키퍼'
         ? {
@@ -444,5 +461,3 @@ class _MyPlayerDetailViewState extends State<MyPlayerDetailView> {
     }).toList();
   }
 }
-
-

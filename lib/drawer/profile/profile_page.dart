@@ -10,6 +10,7 @@ class ProfilePage extends StatelessWidget {
     final profileViewModel = Provider.of<ProfileViewModel>(context);
     final profile = profileViewModel.profile;
 
+    // 프로필 데이터가 로드되지 않았을 때 로딩 인디케이터를 보여줌
     if (profile == null) {
       return Scaffold(
         appBar: AppBar(
@@ -21,10 +22,12 @@ class ProfilePage extends StatelessWidget {
       );
     }
 
+    // 프로필 페이지 UI
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
         actions: [
+          // 프로필 편집 페이지로 이동하는 아이콘 버튼
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: () {
@@ -38,8 +41,8 @@ class ProfilePage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          // ListView를 사용하여 overflow 문제를 해결함
           children: <Widget>[
             Center(
               child: CircleAvatar(
