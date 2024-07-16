@@ -7,6 +7,7 @@ import 'news_section.dart'; // 추가
 // import 'laliga_teams/laliga_teams_view.dart';
 import 'soccer_teams/soccer_teams_page.dart'; // 통합된 페이지 import
 import 'search_section.dart'; // 추가
+//import 'highlight_section.dart';
 
 
 class HomeScreen extends StatelessWidget {
@@ -34,6 +35,7 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                //HighlightSection(), // 하이라이트 섹션 추가
                 SizedBox(height: 20), // 구분을 위한 여백
                 Container(
                   height: 500, // 섹션 높이 설정

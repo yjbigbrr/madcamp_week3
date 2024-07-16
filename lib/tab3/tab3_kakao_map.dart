@@ -62,7 +62,7 @@ void _requestAllMeetings() {
   void _initializeWebSocket() {
   try {
     print('Attempting to connect to WebSocket...');
-    channel = IOWebSocketChannel.connect('ws://10.0.2.2:3000');
+    channel = IOWebSocketChannel.connect('ws://143.248.229.171:3000');
     channel?.stream.listen((message) {
       print('Received: $message');
       final decodedMessage = jsonDecode(message);
