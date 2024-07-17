@@ -367,6 +367,7 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
                           onPressed: () {
                             if (meeting.creatorId != profileViewModel.profile!.id) {
                               _joinMeeting(meeting.id);
+                              _showToast('모임에 참여하였습니다.', Colors.white70);
                             } else {
                               _showToast("모임 생성자는 참여할 수 없습니다.", Colors.red);
                             }
@@ -417,4 +418,3 @@ class KakaoMapView extends StatelessWidget {
     );
   }
 }
-      

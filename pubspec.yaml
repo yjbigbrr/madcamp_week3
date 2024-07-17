@@ -49,7 +49,6 @@ dependencies:
   timezone: ^0.9.4
   audioplayers: ^3.0.1  # BGM 추가를 위해 audioplayers 패키지 추가
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
