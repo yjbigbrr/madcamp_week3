@@ -53,6 +53,9 @@ flutter_native_splash:
   color: "#42a5f5"
   image: assets/images/splash/menaldo.png
   android: true
+  ios: true
+  android_gravity: fill
+  ios_content_mode: scaleAspectFill
 
 dev_dependencies:
   flutter_test:
