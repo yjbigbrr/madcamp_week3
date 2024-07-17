@@ -43,3 +43,9 @@ app.*.map.json
 /android/app/release
 
 server/service/base_url.dart
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build

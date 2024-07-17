@@ -5,7 +5,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 // 유튜브 API를 사용하여 비디오 데이터를 가져오는 서비스 클래스
 class YouTubeService {
-  static const String apiKey = 'AIzaSyD6fLY9QEIa8s99jgwQ2RUm7zpPR48icXs'; // 새 API 키로 업데이트
+  static const String apiKey = 'AIzaSyDA6BfrBrGTAQFI-O2r7-2z1VoAEVv2SHo'; // 새 API 키로 업데이트
 
   // "축구 하이라이트"를 검색어로 사용하여 유튜브 비디오 데이터를 가져오는 메소드
   static Future<List<Map<String, String>>> fetchVideos() async {

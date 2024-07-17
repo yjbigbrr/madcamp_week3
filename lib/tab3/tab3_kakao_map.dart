@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:soccer_app/server/model/Meetings.dart';
@@ -7,6 +8,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import '../drawer/profile/profile_view_model.dart';
 
 class KakaoMapScreen extends StatefulWidget {
   @override
@@ -82,7 +85,6 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
       _showToast('WebSocket connection error: $e', Colors.red);
     }
   }
-
 
   void _requestAllMeetings() {
     channel?.sink.add(jsonEncode({'event': 'findAllMeetings'}));
@@ -239,6 +241,8 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
       return;
     }
 
+    final profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
+
     final newMeeting = Meeting(
       id: DateTime.now().toString(),
       title: _titleController.text,
@@ -250,7 +254,7 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
       time: '${_startDateTime?.toLocal().toString().split(' ')[1].substring(0, 5) ?? ''} ~ ${_endDateTime?.toLocal().toString().split(' ')[1].substring(0, 5) ?? ''}',
       longitude: longitude,
       latitude: latitude,
-      creatorId: 'user123', // 임시로 ‘user123’ 설정, 실제 유저 ID로 대체 필요
+      creatorId: profileViewModel.profile!.id, // 프로필 뷰모델의 유저 ID 사용
     );
 
     setState(() {
@@ -273,6 +277,7 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
 
   void _joinMeeting(String meetingId) {
     final meeting = meetings.firstWhere((meeting) => meeting.id == meetingId);
+    final profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
 
     if (meeting.currentParticipants >= meeting.maxParticipants) {
       _showToast('모임이 이미 가득 찼습니다.', Colors.red);
@@ -283,8 +288,8 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
     final request = jsonEncode({
       'event': 'joinMeeting',
       'data': {
-        'id': meetingId,
-        'participantId': 'user123', // 실제 사용자 ID로 변경 필요
+        'meetingId': meetingId,
+        'userId': profileViewModel.profile!.id, // 실제 사용자 ID로 변경 필요
       }
     });
 
@@ -313,6 +318,7 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text('Kakao Map Example'),
@@ -347,7 +353,7 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
                         ),
                         trailing: ElevatedButton(
                           onPressed: () {
-                            if (meeting.creatorId != 'user123') {
+                            if (meeting.creatorId != profileViewModel.profile!.id) {
                               _joinMeeting(meeting.id);
                             } else {
                               _showToast("모임 생성자는 참여할 수 없습니다.", Colors.red);
