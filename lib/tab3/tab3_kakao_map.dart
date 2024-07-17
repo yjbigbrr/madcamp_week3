@@ -47,7 +47,7 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
   void _initializeWebSocket() {
     try {
       print('Attempting to connect to WebSocket...');
-      channel = IOWebSocketChannel.connect('ws://172.10.7.63:80');
+      channel = IOWebSocketChannel.connect('ws://143.248.228.210:3000');
       channel?.stream.listen(
             (message) {
           debugPrint('Received: $message');

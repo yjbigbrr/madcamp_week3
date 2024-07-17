@@ -49,6 +49,7 @@ dependencies:
   timezone: ^0.9.4
   audioplayers: ^3.0.1  # BGM 추가를 위해 audioplayers 패키지 추가
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -64,5 +65,6 @@ flutter:
     - assets/images/kleague/
     - assets/images/laliga/
     - assets/images/premierleague/
+    - assets/texts/
     - assets/images/splash/
     - assets/audio/ch.mp3
