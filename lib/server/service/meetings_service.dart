@@ -6,9 +6,10 @@ import '../model/Meetings.dart';
 
 class MeetingService {
   final String baseUrl = BaseUrl.baseUrl;
+
   // 현재 유저의 모임 불러오기
   Future<List<Meeting>> getMeetings(String userId) async {
-    final response = await http.get(Uri.parse('$baseUrl/users/$userId/meetings'));
+    final response = await http.get(Uri.parse('$baseUrl/meetings/$userId'));
 
     debugPrint('getMeetings Response status: ${response.statusCode}');
     debugPrint('getMeetings Response body: ${response.body}');
@@ -89,6 +90,42 @@ class MeetingService {
       return true;
     } else {
       throw Exception('Failed to join meeting');
+    }
+  }
+
+  // 모임 취소
+  Future<bool> cancelMeeting(String meetingId, String userId) async {
+    final response = await http.patch(
+      Uri.parse('$baseUrl/meetings/cancel/$meetingId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({'userId': userId}),
+    );
+
+    debugPrint('Response status: ${response.statusCode}');
+    debugPrint('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to cancel meeting');
+    }
+  }
+
+  // 모임 삭제
+  Future<bool> deleteMeeting(String meetingId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/meetings/$meetingId'),
+    );
+
+    debugPrint('Response status: ${response.statusCode}');
+    debugPrint('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to delete meeting');
     }
   }
 }
