@@ -34,7 +34,7 @@ class NewsService {
   }
 
   // 이미지 검색
-  Future<String> fetchImage(String query) async {
+  Future<String?> fetchImage(String query) async {
     await Future.delayed(Duration(milliseconds: 500));
 
     final response = await http.get(
@@ -50,11 +50,11 @@ class NewsService {
       if (data['items'].isNotEmpty) {
         return data['items'][0]['thumbnail'];
       } else {
-        return 'assets/images/placeholder.jpg';
+        return null;
       }
     } else {
       print('Failed to load image: ${response.statusCode}');
-      throw Exception('Failed to load image');
+      return null;
     }
   }
 

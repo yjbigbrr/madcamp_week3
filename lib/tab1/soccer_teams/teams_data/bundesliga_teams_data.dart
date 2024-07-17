@@ -34,13 +34,13 @@ List<Team> bundesligaTeams = [
     imagePath: 'assets/images/bundeseliga/SV.svg',
     starting11ImagePath: 'assets/images/bundeseliga/SV_starting11.png',
     playerStatsImagePath: 'assets/images/bundeseliga/SV_player_stats.png',
-    clubInfoPath: 'assets/texts/SV_club_info.txt',
+    clubInfoPath: 'assets/texts/sv_club_info.txt',
   ),
   Team(
     name: 'VfB',
     imagePath: 'assets/images/bundeseliga/VfB.svg',
     starting11ImagePath: 'assets/images/bundeseliga/VfB_starting11.png',
     playerStatsImagePath: 'assets/images/bundeseliga/VfB_player_stats.png',
-    clubInfoPath: 'assets/texts/VfB_club_info.txt',
+    clubInfoPath: 'assets/texts/vfb_club_info.txt',
   ),
 ];

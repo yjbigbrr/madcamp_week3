@@ -51,13 +51,6 @@ dependencies:
   timezone: ^0.9.4
   audioplayers: ^3.0.1  # BGM 추가를 위해 audioplayers 패키지 추가
 
-flutter_native_splash:
-  color: "#42a5f5"
-  image: assets/images/splash/menaldo.png
-  android: true
-  ios: true
-  android_gravity: fill
-  ios_content_mode: scaleAspectFill
 
 dev_dependencies:
   flutter_test:
@@ -92,6 +85,7 @@ flutter:
     - assets/images/laliga/
     - assets/images/premierleague/
     - assets/texts/
+    - assets/images/placeholder/
     - assets/images/splash/
     - assets/audio/ch.mp3
 flutter_native_splash:
