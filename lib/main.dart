@@ -59,10 +59,43 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Drawer and Tabs Example',
+      title: '레츠볼',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        colorScheme: ColorScheme(
+          primary: Colors.teal,
+          primaryContainer: Colors.teal.shade700,
+          secondary: Colors.blueGrey,
+          secondaryContainer: Colors.blueGrey.shade700,
+          surface: Colors.white,
+          background: Colors.grey.shade200,
+          error: Colors.red,
+          onPrimary: Colors.white,
+          onSecondary: Colors.white,
+          onSurface: Colors.black,
+          onBackground: Colors.black,
+          onError: Colors.white,
+          brightness: Brightness.light,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.teal,
+          foregroundColor: Colors.white, // 앱바의 텍스트 및 아이콘 색상
+        ),
+        tabBarTheme: const TabBarTheme(
+          labelColor: Colors.white, // 선택된 탭의 텍스트 색상
+          unselectedLabelColor: Colors.blueGrey, // 선택되지 않은 탭의 텍스트 색상
+          indicator: BoxDecoration(
+            color: Colors.blueGrey, // 선택된 탭의 배경 색상
+          ),
+        ),
+        scaffoldBackgroundColor: Colors.grey.shade200, // 스캐폴드 배경 색상
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.black), // 기본 본문 텍스트 색상
+          bodyMedium: TextStyle(color: Colors.black), // 기본 본문 텍스트 색상
+        ),
+        buttonTheme: const ButtonThemeData(
+          buttonColor: Colors.teal, // 버튼 배경 색상
+          textTheme: ButtonTextTheme.primary, // 버튼 텍스트 색상
+        ),
       ),
       home: SplashScreen(),
     );
@@ -139,10 +172,15 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter Drawer and Tabs Example'),
+        title: const Text('레츠볼'),
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
+          onTap: (index) {
+            setState(() {
+              _tabController.index = index;
+            });
+          },
+          tabs: const [
             Tab(icon: Icon(Icons.home), text: '홈'),
             Tab(icon: Icon(Icons.trending_up), text: '경기일정'),
             Tab(icon: Icon(Icons.person), text: '펍'),
@@ -170,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   ),
                 ),
                 ListTile(
-                  title: Text('프로필'),
+                  title: const Text('프로필'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -179,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   },
                 ),
                 ListTile(
-                  title: Text('나만의 선수'),
+                  title: const Text('나만의 선수'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -188,7 +226,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   },
                 ),
                 ListTile(
-                  title: Text('친구'),
+                  title: const Text('친구'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -199,7 +237,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   },
                 ),
                 ListTile(
-                  title: Text('내 예약'),
+                  title: const Text('내 예약'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -208,7 +246,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   },
                 ),
                 ListTile(
-                  title: Text('Logout'),
+                  title: const Text('Logout'),
                   onTap: () async {
                     await profileViewModel.clearProfile();
                     Navigator.pushAndRemoveUntil(
@@ -225,6 +263,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       ),
       body: TabBarView(
         controller: _tabController,
+        physics: NeverScrollableScrollPhysics(), // 손가락 제스처로 탭 전환을 막음
         children: <Widget>[
           HomeScreen(), // 추가된 부분
           SchedulePage(),

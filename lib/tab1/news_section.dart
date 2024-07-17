@@ -10,15 +10,28 @@ class NewsSection extends StatefulWidget {
 class _NewsSectionState extends State<NewsSection> {
   late Future<List<dynamic>> overseasNews;
   late Future<List<dynamic>> localNews;
+  final List<String> overseasPlaceholders = [
+    'assets/images/placeholder/overseasplaceholder1.jpg',
+    'assets/images/placeholder/overseasplaceholder2.jpg',
+    'assets/images/placeholder/overseasplaceholder3.jpg'
+  ];
+  final List<String> localPlaceholders = [
+    'assets/images/placeholder/localplaceholder1.jpg',
+    'assets/images/placeholder/localplaceholder2.jpg',
+    'assets/images/placeholder/localplaceholder3.jpg'
+  ];
+
+  int overseasPlaceholderIndex = 0;
+  int localPlaceholderIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    overseasNews = fetchNewsWithImages('유로 우승');
-    localNews = fetchNewsWithImages('국가대표 축구대표팀');
+    overseasNews = fetchNewsWithImages('유로 우승', 'overseas');
+    localNews = fetchNewsWithImages('국가대표 축구대표팀', 'local');
   }
 
-  Future<List<dynamic>> fetchNewsWithImages(String query) async {
+  Future<List<dynamic>> fetchNewsWithImages(String query, String type) async {
     NewsService newsService = NewsService();
     List<dynamic> newsArticles;
 
@@ -27,10 +40,10 @@ class _NewsSectionState extends State<NewsSection> {
 
       for (var article in newsArticles) {
         String title = article['title'];
-        print('Original title: $title'); // 로깅 추가
-        String cleanTitle = newsService.cleanTitle(title); // 특수 문자 제거
-        print('Cleaned title: $cleanTitle'); // 로깅 추가
-        article['thumbnail'] = await newsService.fetchImage(cleanTitle);
+        print('Original title: $title');
+        String cleanTitle = newsService.cleanTitle(title);
+        print('Cleaned title: $cleanTitle');
+        article['thumbnail'] = await newsService.fetchImage(cleanTitle) ?? _getSequentialPlaceholder(type);
       }
     } catch (e) {
       print('Error fetching news with images: $e');
@@ -38,6 +51,18 @@ class _NewsSectionState extends State<NewsSection> {
     }
 
     return newsArticles;
+  }
+
+  String _getSequentialPlaceholder(String type) {
+    if (type == 'overseas') {
+      String placeholder = overseasPlaceholders[overseasPlaceholderIndex];
+      overseasPlaceholderIndex = (overseasPlaceholderIndex + 1) % overseasPlaceholders.length;
+      return placeholder;
+    } else {
+      String placeholder = localPlaceholders[localPlaceholderIndex];
+      localPlaceholderIndex = (localPlaceholderIndex + 1) % localPlaceholders.length;
+      return placeholder;
+    }
   }
 
   @override
@@ -58,12 +83,12 @@ class _NewsSectionState extends State<NewsSection> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('Failed to load news'));
               } else {
-                final overseasArticles = snapshot.data![0].take(3).toList(); // 상위 3개 기사만 가져오기
-                final localArticles = snapshot.data![1].take(3).toList(); // 상위 3개 기사만 가져오기
+                final overseasArticles = snapshot.data![0].take(3).toList();
+                final localArticles = snapshot.data![1].take(3).toList();
                 return Column(
                   children: [
-                    _buildNewsRow(overseasArticles),
-                    _buildNewsRow(localArticles),
+                    _buildNewsRow(overseasArticles, 'overseas'),
+                    _buildNewsRow(localArticles, 'local'),
                   ],
                 );
               }
@@ -74,17 +99,17 @@ class _NewsSectionState extends State<NewsSection> {
     );
   }
 
-  Widget _buildNewsRow(List<dynamic> articles) {
+  Widget _buildNewsRow(List<dynamic> articles, String type) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: articles.map((article) => _buildNewsItem(article)).toList(),
+      children: articles.map((article) => _buildNewsItem(article, type)).toList(),
     );
   }
 
-  Widget _buildNewsItem(dynamic article) {
+  Widget _buildNewsItem(dynamic article, String type) {
     final String rawTitle = article['title']?.replaceAll('<b>', '')?.replaceAll('</b>', '') ?? 'No Title';
-    final String title = rawTitle.replaceAll('&quot;', '"'); // &quot;를 실제 큰따옴표로 대체
-    final String thumbnail = article['thumbnail'] ?? 'assets/images/placeholder.jpg';
+    final String title = rawTitle.replaceAll('&quot;', '"');
+    final String thumbnail = article['thumbnail'] ?? _getSequentialPlaceholder(type);
     final String originallink = article['originallink'] ?? '';
     final String pubDate = article['pubDate'] ?? 'Unknown Date';
 
@@ -97,7 +122,7 @@ class _NewsSectionState extends State<NewsSection> {
         }
       },
       child: Container(
-        width: MediaQuery.of(context).size.width / 3.3, // 너비 조정
+        width: MediaQuery.of(context).size.width / 3.3,
         margin: EdgeInsets.all(5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,13 +134,13 @@ class _NewsSectionState extends State<NewsSection> {
               height: 100,
               errorBuilder: (context, error, stackTrace) {
                 return Image.asset(
-                  'assets/images/placeholder.jpg',
+                  _getSequentialPlaceholder(type),
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: 100,
                 );
               },
-            ), // 에러 발생 시 placeholder 사용
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
@@ -127,7 +152,7 @@ class _NewsSectionState extends State<NewsSection> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
-                '신문사: $pubDate',
+                '날짜: $pubDate',
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ),

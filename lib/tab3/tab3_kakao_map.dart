@@ -47,7 +47,7 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
   void _initializeWebSocket() {
     try {
       print('Attempting to connect to WebSocket...');
-      channel = IOWebSocketChannel.connect('ws://143.248.229.171:3000');
+      channel = IOWebSocketChannel.connect('ws://143.248.228.210:3000');
       channel?.stream.listen(
             (message) {
           debugPrint('Received: $message');
@@ -253,7 +253,7 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
       date: _startDateTime?.toLocal().toString().split(' ')[0] ?? '',
       time: '${_startDateTime?.toLocal().toString().split(' ')[1].substring(0, 5) ?? ''} ~ ${_endDateTime?.toLocal().toString().split(' ')[1].substring(0, 5) ?? ''}',
       longitude: longitude,
-      latitude: latitude,
+            latitude: latitude,
       creatorId: profileViewModel.profile!.id, // 프로필 뷰모델의 유저 ID 사용
     );
 
@@ -321,7 +321,19 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
     final profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kakao Map Example'),
+        title: Row(
+          children: const [
+            Text(
+              '축구도 보고 술도 마시고',
+              style: TextStyle(
+                fontFamily: 'CuteFont',
+                fontSize: 24,
+              ),
+            ),
+            SizedBox(width: 8),
+            Text('🍺'),
+          ],
+        ),
       ),
       body: Stack(
         children: [
@@ -346,10 +358,10 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
                         title: Text(meeting.title),
                         subtitle: Text(
                           '${meeting.currentParticipants}/${meeting.maxParticipants} participants\n'
-                              '${meeting.pubAddress}\n'
-                              '${meeting.supportTeam}\n'
-                              '${meeting.date} ${meeting.time}\n'
-                              'Longitude: ${meeting.longitude}, Latitude: ${meeting.latitude}',
+                          '${meeting.pubAddress}\n'
+                          '${meeting.supportTeam}\n'
+                          '${meeting.date} ${meeting.time}\n'
+                          'Longitude: ${meeting.longitude}, Latitude: ${meeting.latitude}',
                         ),
                         trailing: ElevatedButton(
                           onPressed: () {
@@ -378,10 +390,8 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
                 });
                 print('isMapView toggled to $isMapView');
               },
-              child: Text(
-                isMapView ? '목록보기' : '지도보기',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12),
+              child: Icon(
+                isMapView ? Icons.list : Icons.map,
               ),
             ),
           ),
@@ -398,7 +408,6 @@ class _KakaoMapScreenState extends State<KakaoMapScreen> {
     );
   }
 }
-
 
 class KakaoMapView extends StatelessWidget {
   @override
