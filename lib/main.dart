@@ -1,8 +1,8 @@
-import 'dart:io';
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:provider/provider.dart';
+import 'package:audioplayers/audioplayers.dart'; // 추가
 import 'package:soccer_app/drawer/friend/friend_page.dart';
 import 'package:soccer_app/drawer/meeting/meeting_page.dart';
 import 'package:soccer_app/drawer/myplayer/myplayer_view_model.dart';
@@ -22,13 +22,13 @@ import 'drawer/meeting/meeting_view_model.dart'; // 추가
 
 void main() {
   KakaoSdk.init(nativeAppKey: '6cf381adbd9cf31b14c1db80c010a446');  // 실제 네이티브 앱 키로 대체하세요.
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
           create: (context) => ProfileViewModel(),
         ),
-
         ChangeNotifierProxyProvider<ProfileViewModel, ScheduleViewModel>(
           create: (context) => ScheduleViewModel(MatchService(), ""),
           update: (context, profileViewModel, scheduleViewModel) {
@@ -38,7 +38,6 @@ void main() {
             return ScheduleViewModel(MatchService(), "");
           },
         ),
-
         ChangeNotifierProvider(create: (context) => MeetingViewModel(MeetingService(), Provider.of<ProfileViewModel>(context, listen: false))),
         ChangeNotifierProxyProvider<ProfileViewModel, MyPlayerViewModel>(
           create: (context) => MyPlayerViewModel(
@@ -57,44 +56,61 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  Future<Widget> _getInitialPage(BuildContext context) async {
-    final profileViewModel = Provider.of<ProfileViewModel>(context, listen: false);
-    await profileViewModel.loadProfile();
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Drawer and Tabs Example',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: SplashScreen(),
+    );
+  }
+}
 
-    if (profileViewModel.profile != null) {
-      return MyHomePage(); // 홈 페이지로 이동
-    } else {
-      return LoginScreen(); // 로그인 페이지로 이동
-    }
+class SplashScreen extends StatefulWidget {
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  late AudioPlayer _audioPlayer;
+
+  @override
+  void initState() {
+    super.initState();
+    _audioPlayer = AudioPlayer();
+    _playMusic();
+    _navigateToHome();
+  }
+
+  Future<void> _playMusic() async {
+    await _audioPlayer.play(AssetSource('audio/ch.mp3'));
+  }
+
+  void _navigateToHome() {
+    Timer(Duration(seconds: 4), () {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => MyHomePage(),
+        ),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Widget>(
-      future: _getInitialPage(context),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return MaterialApp(
-            title: 'Flutter Drawer and Tabs Example',
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-              useMaterial3: true,
-            ),
-            home: Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            ),
-          );
-        } else {
-          return MaterialApp(
-            title: 'Flutter Drawer and Tabs Example',
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-              useMaterial3: true,
-            ),
-            home: snapshot.data,
-          );
-        }
-      },
+    return Scaffold(
+      body: Center(
+        child: Image.asset('assets/images/splash/menaldo.png', fit: BoxFit.cover),
+      ),
     );
   }
 }
@@ -136,7 +152,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       drawer: Drawer(
         child: Consumer<ProfileViewModel>(
           builder: (context, profileViewModel, child) {
-            // Ensure that the profile is loaded before building the drawer
             if (profileViewModel.profile == null) {
               profileViewModel.loadProfile();
               return Center(child: CircularProgressIndicator());
@@ -154,7 +169,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                     child: Text(profile?.nickname.substring(0, 1) ?? 'U'),
                   ),
                 ),
-                // Other Drawer items here
                 ListTile(
                   title: Text('프로필'),
                   onTap: () {
@@ -209,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           },
         ),
       ),
-       body: TabBarView(
+      body: TabBarView(
         controller: _tabController,
         children: <Widget>[
           HomeScreen(), // 추가된 부분
