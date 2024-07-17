@@ -32,15 +32,20 @@ class _MeetingPageState extends State<MeetingPage> {
             itemCount: meetingViewModel.meetings.length,
             itemBuilder: (context, index) {
               final meeting = meetingViewModel.meetings[index];
+              final isCreator = meeting.creatorId == meetingViewModel.profileViewModel.profile?.id;
+
               return Card(
                 child: ListTile(
                   title: Text(meeting.title),
                   subtitle: Text('Date: ${meeting.date}\nTime: ${meeting.time}'),
-                  trailing: meeting.isClosed
-                      ? Text('Closed', style: TextStyle(color: Colors.red))
+                  trailing: isCreator
+                      ? ElevatedButton(
+                    onPressed: () => meetingViewModel.deleteMeeting(meeting.id),
+                    child: Text('Delete'),
+                  )
                       : ElevatedButton(
-                    onPressed: () => meetingViewModel.joinMeeting(meeting.id),
-                    child: Text('Join'),
+                    onPressed: () => meetingViewModel.cancelMeeting(meeting.id),
+                    child: Text('Cancel'),
                   ),
                   onTap: () {
                     Navigator.push(

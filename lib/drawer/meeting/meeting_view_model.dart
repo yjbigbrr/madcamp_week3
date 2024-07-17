@@ -31,4 +31,27 @@ class MeetingViewModel extends ChangeNotifier {
       print('Failed to join meeting: $error');
     }
   }
+
+  Future<void> cancelMeeting(String meetingId) async {
+    try {
+      final userId = profileViewModel.profile?.id ?? '';
+      final success = await meetingService.cancelMeeting(meetingId, userId);
+      if (success) {
+        await fetchUserMeetings();
+      }
+    } catch (error) {
+      print('Failed to cancel meeting: $error');
+    }
+  }
+
+  Future<void> deleteMeeting(String meetingId) async {
+    try {
+      final success = await meetingService.deleteMeeting(meetingId);
+      if (success) {
+        await fetchUserMeetings();
+      }
+    } catch (error) {
+      print('Failed to delete meeting: $error');
+    }
+  }
 }
