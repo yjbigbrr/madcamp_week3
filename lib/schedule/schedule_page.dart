@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:soccer_app/drawer/profile/profile_view_model.dart';
 import 'package:soccer_app/schedule/schedule_detail_page.dart';
@@ -92,10 +93,24 @@ class _SchedulePageState extends State<SchedulePage> {
                         onPressed: () async {
                           try {
                             await viewModel.addUserToWaitList(match.matchId);
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('관전 예약이 완료되었습니다.')));
+                            Fluttertoast.showToast(
+                              msg: "예약하였습니다.",
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0,
+                            );
                           } catch (e) {
                             if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('관전 예약에 실패했습니다.')));
+                              Fluttertoast.showToast(
+                                msg: "예약에 실패하였습니다.",
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.CENTER,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0,
+                              );
                             }
                           }
                         },

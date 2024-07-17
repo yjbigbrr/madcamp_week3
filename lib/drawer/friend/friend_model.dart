@@ -5,6 +5,7 @@ class Friend {
   Friend({
     required this.id,
     required this.nickname,
+
   });
 
   factory Friend.fromJson(Map<String, dynamic> json) {
