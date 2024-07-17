@@ -12,7 +12,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text('Kakao Map Example')),
+        appBar: AppBar(
+          title: Row(
+            children: const [
+              Text(
+                '축구도 보고 술도 마시고',
+                style: TextStyle(
+                  fontFamily: 'CuteFont', // 추가한 글꼴 사용
+                  fontSize: 24,
+                ),
+              ),
+              SizedBox(width: 8),
+              Text('🍺'), // 맥주 이모티콘 추가
+            ],
+          ),
+        ),
         body: KakaoMapView(),
       ),
     );
@@ -22,7 +36,7 @@ class MyApp extends StatelessWidget {
 class KakaoMapView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return WebView(
+    return const WebView(
       initialUrl: 'https://map.kakao.com/',
       javascriptMode: JavascriptMode.unrestricted,
     );
