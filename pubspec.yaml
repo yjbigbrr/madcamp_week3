@@ -91,6 +91,7 @@ flutter:
     - assets/images/kleague/
     - assets/images/laliga/
     - assets/images/premierleague/
+    - assets/texts/
     - assets/images/splash/
     - assets/audio/ch.mp3
 flutter_native_splash:

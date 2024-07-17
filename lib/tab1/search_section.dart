@@ -22,7 +22,7 @@ class SearchSection extends StatelessWidget {
         focusNode: FocusNode(canRequestFocus: false),
         readOnly: true,
         decoration: InputDecoration(
-          hintText: '당신의 최애 축구팀은?',
+          hintText: '당신의 최애 축구선수, 축구팀은?',
           prefixIcon: Icon(Icons.search),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
