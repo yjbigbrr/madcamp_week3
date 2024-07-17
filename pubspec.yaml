@@ -66,5 +66,6 @@ flutter:
     - assets/images/laliga/
     - assets/images/premierleague/
     - assets/texts/
+    - assets/images/placeholder/
     - assets/images/splash/
     - assets/audio/ch.mp3
